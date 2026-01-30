@@ -12,7 +12,9 @@ import { AiOutlineMenu } from "react-icons/ai";
 
 import { FcGoogle } from "react-icons/fc";   
 import { FaFacebookF } from "react-icons/fa";
-
+import { FaInstagram, FaYoutube } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
+import { HiOutlineGlobeAlt } from "react-icons/hi2";
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
 const [menuOpen, setMenuOpen] = useState(false);
@@ -65,20 +67,7 @@ const registerSubmit = async (values, { resetForm }) => {
 
   return (
     <div className=" flex justify-center flex-col gap-4 relative">
-{/* <div className="fixed h-[92px] w-full bg-[rgba(255,255,255,0.5)] top-0 right-0 z-50 flex justify-between items-center px-10">
-    <div className="flex gap-2">
-        <img src={logo}/>
-        <a href="#" className="text-2xl text-white font-semibold border-r-2 px-2">Book Shop</a>
-        <a href="#" className="text-2xl text-white   px-2">Home</a>
-        <a href="#" className="text-2xl text-white  px-2">Books</a>
-        <a href="#" className="text-2xl text-white   px-2">About Us</a>
-    </div>
-    <div className="flex gap-3 p-3">
-        <button onClick={()=>{navigate('/login')}} className="btn bg-[rgba(217,23,108,1)] p-3 rounded font-semibold text-white">Log in</button>
-        <button onClick={()=>{navigate('/register')}} className="btn bg-white p-3 font-semibold rounded text-[rgba(217,23,108,1)]">Sign Up</button>
-    </div>
-  
-</div> */}
+
  <div className="fixed h-[92px] w-full bg-[rgba(255,255,255,0.5)] top-0 right-0 z-50 flex justify-between items-center px-10">
       {/* Logo & Links */}
       <div className="flex gap-2 items-center">
@@ -247,6 +236,56 @@ const registerSubmit = async (values, { resetForm }) => {
         </Formik>
       </div>
     </div>
+
+
+
+<footer className="bg-[#3b2f4a] text-gray-300 px-6 py-10">
+  <div className="max-w-7xl mx-auto">
+
+    {/* Top Section */}
+    <div className="flex flex-col md:flex-row justify-between gap-8 border-b border-gray-500 pb-8">
+      
+      {/* LEFT */}
+      <div className="flex flex-col md:flex-row items-center gap-6">
+        <img src={logo} alt="logo" className="h-10 w-auto" />
+
+        <ul className="flex gap-6 text-sm">
+          <li className="hover:text-white cursor-pointer">Home</li>
+          <li className="hover:text-white cursor-pointer">Books</li>
+          <li className="hover:text-white cursor-pointer">About Us</li>
+        </ul>
+      </div>
+
+      {/* RIGHT */}
+      <div className="flex flex-col items-center md:items-end gap-4">
+        <div className="flex gap-4 text-lg">
+          <FaFacebookF className="hover:text-white cursor-pointer" />
+          <FaInstagram className="hover:text-white cursor-pointer" />
+          <FaYoutube className="hover:text-white cursor-pointer" />
+          <FaXTwitter className="hover:text-white cursor-pointer" />
+        </div>
+      </div>
+    </div>
+
+    {/* Bottom Section */}
+    <div className="mt-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs">
+      
+      <p className="text-center md:text-left">
+        Developed by EraaSoft © All Rights Reserved 2024
+      </p>
+
+      <div className="flex items-center gap-2 border border-gray-400 rounded px-3 py-1 cursor-pointer hover:border-white">
+        <HiOutlineGlobeAlt />
+        <span>English</span>
+      </div>
+
+    </div>
+
+  </div>
+</footer>
+
+
+
     </div>
   );
 }

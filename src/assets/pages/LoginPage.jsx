@@ -2,121 +2,109 @@
 import React, { useState } from "react";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as Yup from "yup";
-import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import { AiOutlineEye, AiOutlineEyeInvisible, AiOutlineMenu } from "react-icons/ai";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { FcGoogle } from "react-icons/fc";   
-import { FaFacebookF } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
+import { FaFacebookF, FaInstagram, FaYoutube } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
+import { HiOutlineGlobeAlt } from "react-icons/hi2";
+
 import bgImage from "../images/533643aa8db82414f48d43a992d009dda3961386.png";
-import logo from "../images/book-bookmark 1.png"
-
-
-
-
-
-import { AiOutlineMenu } from "react-icons/ai";
-
+import logo from "../images/book-bookmark 1.png";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
-const [menuOpen, setMenuOpen] = useState(false);
-  // Initial values
+
   const initialValues = {
     email: "",
     password: "",
     rememberMe: false,
   };
 
-  // Validation schema
   const validationSchema = Yup.object({
     email: Yup.string().email("Invalid email").required("Email is required"),
     password: Yup.string().required("Password is required"),
   });
 
-  // Submit function
   const loginSubmit = async (values) => {
     try {
       const res = await axios.post(
         "https://bookstore.eraasoft.pro/api/login",
         {
-          email: values.email, // backend expects 'identifier'
+          email: values.email,
           password: values.password,
         }
       );
 
-      console.log(res.data);
-
-      // Store token
       if (values.rememberMe) {
         localStorage.setItem("token", res.data.token);
       } else {
         sessionStorage.setItem("token", res.data.token);
       }
 
-      navigate("/"); // redirect after login
+      navigate("/");
     } catch (err) {
-      console.error(err.response?.data || err.message);
+      console.error(err);
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-gray-50 p-4 relative">
-        
-         <div className="fixed h-[92px] w-full bg-[rgba(255,255,255,0.5)] top-0 right-0 z-50 flex justify-between items-center px-10">
-              {/* Logo & Links */}
-              <div className="flex gap-2 items-center">
-                <img src={logo} alt="logo" />
-                <a href="#" className="text-2xl text-white font-semibold border-r-2 px-2 hidden md:inline-block">
-                  Book Shop
-                </a>
-                <a href="#" className="text-2xl text-white px-2 hidden md:inline-block">Home</a>
-                <a href="#" className="text-2xl text-white px-2 hidden md:inline-block">Books</a>
-                <a href="#" className="text-2xl text-white px-2 hidden md:inline-block">About Us</a>
-              </div>
-        
-              {/* Desktop Buttons */}
-              <div className="flex gap-3 p-3 hidden md:flex">
-                <button onClick={() => navigate("/login")} className="btn bg-[rgba(217,23,108,1)] p-3 rounded font-semibold text-white">Log in</button>
-                <button onClick={() => navigate("/register")} className="btn bg-white p-3 font-semibold rounded text-[rgba(217,23,108,1)]">Sign Up</button>
-              </div>
-        
-              {/* Hamburger for Mobile */}
-              <div className="md:hidden flex items-center">
-                <button onClick={() => setMenuOpen(!menuOpen)}>
-                  {menuOpen ? <AiOutlineClose size={25} className="text-white" /> : <AiOutlineMenu size={25} className="text-white" />}
-                </button>
-              </div>
-        
-              {/* Mobile Menu */}
-              {menuOpen && (
-                <div className="absolute top-[92px] left-0 w-full bg-[rgba(255,255,255,0.95)] flex flex-col items-center py-4 space-y-3 md:hidden shadow-md">
-                  <a href="#" className="text-2xl text-[rgba(217,23,108,1)]">Book Shop</a>
-                  <a href="#" className="text-xl text-gray-800">Home</a>
-                  <a href="#" className="text-xl text-gray-800">Books</a>
-                  <a href="#" className="text-xl text-gray-800">About Us</a>
-                  <button onClick={() => navigate("/login")} className="w-3/4 py-2 bg-[rgba(217,23,108,1)] text-white rounded font-semibold">Log in</button>
-                  <button onClick={() => navigate("/register")} className="w-3/4 py-2 border border-[rgba(217,23,108,1)] text-[rgba(217,23,108,1)] rounded font-semibold">Sign Up</button>
-                </div>
-              )}
-            </div>
-        
-               <div
-          className="w-full h-[338px] bg-cover bg-center bg-fixed "
-          style={{ backgroundImage: `url(${bgImage})` }}
-        ></div>
-      <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md flex flex-col gap-6">
-       
-        <h2 className="text-center text-[rgba(217,23,108,1)] text-2xl font-semibold">Welcome Back</h2>
+    <div className="min-h-screen flex flex-col bg-gray-50 relative">
 
-        <Formik
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-          onSubmit={loginSubmit}
-        >
-          {({ errors, touched }) => (
+      {/* ================= NAVBAR (FIXED فوق الصورة) ================= */}
+      <div className="fixed top-0 left-0 w-full h-[92px] bg-[rgba(255,255,255,0.5)] z-50 flex justify-between items-center px-10">
+        <div className="flex gap-2 items-center">
+          <img src={logo} alt="logo" />
+          <a className="text-2xl text-white font-semibold hidden md:inline">Book Shop</a>
+          <a className="text-2xl text-white hidden md:inline">Home</a>
+          <a className="text-2xl text-white hidden md:inline">Books</a>
+          <a className="text-2xl text-white hidden md:inline">About Us</a>
+        </div>
+
+        <div className="hidden md:flex gap-3">
+          <button
+            onClick={() => navigate("/login")}
+            className="bg-[rgba(217,23,108,1)] px-4 py-2 rounded text-white"
+          >
+            Log in
+          </button>
+          <button
+            onClick={() => navigate("/register")}
+            className="bg-white px-4 py-2 rounded text-[rgba(217,23,108,1)]"
+          >
+            Sign Up
+          </button>
+        </div>
+
+        <div className="md:hidden">
+          <button onClick={() => setMenuOpen(!menuOpen)}>
+            <AiOutlineMenu size={25} className="text-white" />
+          </button>
+        </div>
+      </div>
+
+      {/* ================= HERO (بيبدأ من فوق خالص) ================= */}
+      <div
+        className="w-full h-[338px] bg-cover bg-center"
+        style={{ backgroundImage: `url(${bgImage})` }}
+      />
+
+      {/* ================= FORM (زي ما كان بالظبط) ================= */}
+      <div className="w-full flex justify-center py-10">
+        <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md flex flex-col gap-6">
+          <h2 className="text-center text-[rgba(217,23,108,1)] text-2xl font-semibold">
+            Welcome Back
+          </h2>
+
+          <Formik
+            initialValues={initialValues}
+            validationSchema={validationSchema}
+            onSubmit={loginSubmit}
+          >
             <Form className="flex flex-col gap-6">
-              {/* Email */}
               <div className="flex flex-col gap-2">
                 <label>Email</label>
                 <Field
@@ -124,14 +112,9 @@ const [menuOpen, setMenuOpen] = useState(false);
                   className="input input-bordered w-full p-2"
                   placeholder="Enter your email"
                 />
-                <ErrorMessage
-                  name="email"
-                  component="p"
-                  className="text-red-600"
-                />
+                <ErrorMessage name="email" component="p" className="text-red-600" />
               </div>
 
-              {/* Password */}
               <div className="flex flex-col gap-2 relative">
                 <label>Password</label>
                 <Field
@@ -140,24 +123,15 @@ const [menuOpen, setMenuOpen] = useState(false);
                   className="input input-bordered w-full pr-10 p-2"
                   placeholder="Enter password"
                 />
-                <ErrorMessage
-                  name="password"
-                  component="p"
-                  className="text-red-600"
-                />
+                <ErrorMessage name="password" component="p" className="text-red-600" />
                 <span
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500 cursor-pointer"
+                  className="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer"
                 >
-                  {showPassword ? (
-                    <AiOutlineEyeInvisible size={20} />
-                  ) : (
-                    <AiOutlineEye size={20} />
-                  )}
+                  {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
                 </span>
               </div>
 
-              {/* Remember + Forgot */}
               <div className="flex items-center justify-between text-sm">
                 <div className="flex items-center gap-2">
                   <Field type="checkbox" name="rememberMe" />
@@ -172,29 +146,55 @@ const [menuOpen, setMenuOpen] = useState(false);
                 </span>
               </div>
 
-              {/* Submit Button */}
               <button
                 type="submit"
-                className="text-white btn rounded-2xl bg-[rgba(217,23,108,1)] w-full py-2"
+                className="text-white rounded-2xl bg-[rgba(217,23,108,1)] w-full py-2"
               >
                 Login
               </button>
 
-                            <div className="flex flex-col gap-4 mt-4">
-                <button className="flex items-center justify-center gap-2 cursor-pointer shadow rounded-lg py-2">
+              <div className="flex flex-col gap-4 mt-4">
+                <button className="flex items-center justify-center gap-2 shadow rounded-lg py-2">
                   <FcGoogle size={20} />
                   Sign up with Google
                 </button>
-              
-                <button className="flex items-center justify-center gap-2 shadow cursor-pointer rounded-lg py-2 text-black">
+
+                <button className="flex items-center justify-center gap-2 shadow rounded-lg py-2">
                   <FaFacebookF className="bg-blue-700 text-white rounded-full" size={20} />
                   Sign up with Facebook
                 </button>
               </div>
             </Form>
-          )}
-        </Formik>
+          </Formik>
+        </div>
       </div>
+
+      {/* ================= FOOTER ================= */}
+      <footer className="w-full bg-[#3b2f4a] text-gray-300 px-10 py-10">
+        <div className="flex flex-col md:flex-row justify-between border-b border-gray-500 pb-6">
+          <div className="flex gap-6 items-center">
+            <img src={logo} alt="logo" className="h-10" />
+            <span>Home</span>
+            <span>Books</span>
+            <span>About Us</span>
+          </div>
+
+          <div className="flex gap-4 text-lg">
+            <FaFacebookF />
+            <FaInstagram />
+            <FaYoutube />
+            <FaXTwitter />
+          </div>
+        </div>
+
+        <div className="flex justify-between items-center mt-6 text-xs">
+          <p>Developed by EraaSoft © All Rights Reserved 2024</p>
+          <div className="flex items-center gap-2 border px-3 py-1 rounded">
+            <HiOutlineGlobeAlt />
+            <span>English</span>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
