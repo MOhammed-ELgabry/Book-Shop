@@ -1,53 +1,5 @@
-// import { useState } from "react";
-// import { Link, useNavigate } from "react-router-dom";
-// import { AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
-
-// import logo from "../images/book-bookmark 1.png";
 
 
-// export default function Navbar() {
-//   const [menuOpen, setMenuOpen] = useState(false);
-//   const navigate = useNavigate();
-
-//   return (
-//     <div className="fixed h-[92px] w-full bg-[rgba(255,255,255,0.5)] top-0 right-0 z-50 flex justify-between items-center px-10">
-//       <div className="flex gap-2 items-center">
-//         <img src={logo} alt="logo" />
-//         <Link to="/" className="text-2xl text-white font-semibold border-r-2 px-2 hidden md:inline-block">
-//           Book Shop
-//         </Link>
-//         <Link to="/" className="text-2xl text-white px-2 hidden md:inline-block">Home</Link>
-//         <Link to="/books" className="text-2xl text-white px-2 hidden md:inline-block">Books</Link>
-//         <Link to="/about" className="text-2xl text-white px-2 hidden md:inline-block">About Us</Link>
-//       </div>
-
-//       <div className="flex gap-3 p-3 hidden md:flex">
-//         <button onClick={() => navigate("/login")} className="btn bg-[rgba(217,23,108,1)] p-3 rounded font-semibold text-white">Log in</button>
-//         <button onClick={() => navigate("/register")} className="btn bg-white p-3 font-semibold rounded text-[rgba(217,23,108,1)]">Sign Up</button>
-//       </div>
-
-//       <div className="md:hidden flex items-center">
-//         <button onClick={() => setMenuOpen(!menuOpen)}>
-//           {menuOpen ? <AiOutlineClose size={25} className="text-white" /> : <AiOutlineMenu size={25} className="text-white" />}
-//         </button>
-//       </div>
-
-//       {menuOpen && (
-//         <div className="absolute top-[92px] left-0 w-full bg-[rgba(255,255,255,0.95)] flex flex-col items-center py-4 space-y-3 md:hidden shadow-md">
-//           <Link to="/" className="text-2xl text-[rgba(217,23,108,1)]">Book Shop</Link>
-//           <Link to="/" className="text-xl text-gray-800">Home</Link>
-//           <Link to="/books" className="text-xl text-gray-800">Books</Link>
-//           <Link to="/about" className="text-xl text-gray-800">About Us</Link>
-//           <button onClick={() => navigate("/login")} className="w-3/4 py-2 bg-[rgba(217,23,108,1)] text-white rounded font-semibold">Log in</button>
-//           <button onClick={() => navigate("/register")} className="w-3/4 py-2 border border-[rgba(217,23,108,1)] text-[rgba(217,23,108,1)] rounded font-semibold">Sign Up</button>
-//         </div>
-//       )}
-//     </div>
-//   );
-// }
-
-
-// src/components/Navbar.jsx
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
