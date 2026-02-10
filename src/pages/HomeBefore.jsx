@@ -12,16 +12,40 @@ import "swiper/css";
 import "swiper/css/navigation";
 import Footer from "../component/Footer";
 import BestSellerSlider from "../component/BestSellerSlider";
+import FlashSale from "../component/FlashSale";
+import { FaShoppingCart, FaStar } from "react-icons/fa";
+import { FiHeart } from "react-icons/fi";
+import Recommended from "../component/Recommended";
 
 export default function HomeBefore() {
   const [useServices, setUseServices] = useState([]);
   const [imageSlider, setImageSlider] = useState([]);
+  const [recommended,setRecommended] =useState([])
+  useEffect(()=>{
+    const fetchData=async()=>{
+      try{
+        const res=await axios.get(
+          "http://localhost:1337/api/recommends/?populate=*"
+        )
+        
+        setRecommended(res.data.data)
+        console.log(res.data.data)
+
+      }catch (err) {
+console.log(err)
+      }
+    }
+    fetchData()
+  },[])
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const res = await axios.get(
           "http://localhost:1337/api/image-sliders?populate=*",
+          
         );
+        
         setImageSlider(res.data.data);
         
       } catch (err) {
@@ -45,6 +69,7 @@ export default function HomeBefore() {
     };
     fetchData();
   }, []);
+
   const images =
   imageSlider.length > 0
     ? [
@@ -97,6 +122,11 @@ export default function HomeBefore() {
       <ServicesGrid services={useServices} />
 
      <BestSellerSlider  images={images} />
+    <Recommended recommended={recommended} />
+
+ 
+
+            <FlashSale />
 
       <Footer />
     </div>

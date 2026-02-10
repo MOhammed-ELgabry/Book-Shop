@@ -37,7 +37,7 @@ export default function BestSellerSlider({ images }) {
             >
               {images.map((img, index) => (
                 <SwiperSlide key={index}>
-                  <div className="flex justify-center items-center bg-white shadow-md rounded-lg p-3 h-[120px]">
+                  <div className="flex justify-center items-center bg-white shadow-md rounded-lg p-3 h-[220px]">
                     <img
                       src={`http://localhost:1337${img.url}`}
                       alt="slider"

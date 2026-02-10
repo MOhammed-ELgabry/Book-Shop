@@ -31,7 +31,7 @@ export default function RegisterPage() {
 
   const registerSubmit = async (values, { resetForm }) => {
     try {
-      const res = await axios.post("https://bookstore.eraasoft.pro/api/register", {
+      const res = await axios.post("http://localhost:1337/api/auth/local/register", {
         first_name: values.firstName,
         last_name: values.lastName,
         email: values.email,
