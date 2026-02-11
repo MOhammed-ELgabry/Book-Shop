@@ -1,8 +1,27 @@
-export default function FlashSale() {
+
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { FaStar, FaStarHalfAlt, FaRegStar, FaShoppingCart } from "react-icons/fa";
+
+export default function FlashSale({ FlashSale }) {
+  const [sale, setSale] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get("http://localhost:1337/api/sales?populate=*");
+        setSale(res.data.data); 
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-6 w-full p-4">
-      
-    
+  
       <div className="flex flex-col gap-3 max-w-md">
         <h2 className="font-bold text-2xl">Flash Sale</h2>
         <p className="text-start text-gray-600">
@@ -19,6 +38,75 @@ export default function FlashSale() {
         </div>
       </div>
 
+      
+      {sale.map((el) => (
+        <div
+          key={el.id}
+          className="w-full max-w-xl bg-[#3b2f4a] rounded-xl p-4 flex gap-4"
+        >
+          {/* الصورة */}
+          <div className="flex-[0.35]">
+            <img
+              className="w-full h-full object-cover rounded"
+              src={`http://localhost:1337${el.image.url}`}
+              alt={el.h3}
+            />
+          </div>
+
+          {/* محتوى الكارد */}
+          <div className="flex-[0.65] flex flex-col gap-2">
+            <h3 className="text-white font-bold text-lg">{el.h3}</h3>
+
+            <p className="text-sm text-gray-300">
+              Author <span className="font-semibold">{el.auther}</span>
+            </p>
+
+      
+            <div className="flex gap-1">
+              {[1, 2, 3, 4, 5].map((star) =>
+                el.rate >= star ? (
+                  <FaStar key={star} className="text-yellow-400" />
+                ) : el.rate >= star - 0.5 ? (
+                  <FaStarHalfAlt key={star} className="text-yellow-400" />
+                ) : (
+                  <FaRegStar key={star} className="text-gray-500" />
+                )
+              )}
+            </div>
+
+         
+            <div className="flex items-center gap-8 text-sm text-amber-50">
+              <p>{el.rate}</p>
+              <p className="text-white">({el.review} review)</p>
+            </div>
+
+           
+            <div className="flex gap-3 items-center">
+              <p className="line-through text-gray-400">{el.price_before} $</p>
+              <p className="text-white text-2xl font-bold">{el.price_after} $</p>
+            </div>
+
+            {/* الخط العريض/الرفيع */}
+            <div className="flex w-full my-2">
+              <div className="w-2/3 h-1 bg-amber-400 rounded-l"></div>
+              <div className="w-1/3 h-[2px] bg-amber-200 self-center"></div>
+            </div>
+
+           
+            <p className="text-sm text-white">{el.book_left} books left</p>
+
+            {/* زر السلة تحت على الشمال */}
+            <div className="flex justify-start mt-auto pt-2">
+              <button
+                className="w-9 h-9 flex items-center justify-center rounded-md shadow-md hover:scale-105 transition"
+                style={{ backgroundColor: "rgba(217, 23, 108, 1)" }}
+              >
+                <FaShoppingCart className="text-white text-sm" />
+              </button>
+            </div>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
