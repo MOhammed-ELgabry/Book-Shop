@@ -44,7 +44,7 @@ export default function FlashSale({ FlashSale }) {
           key={el.id}
           className="w-full max-w-xl bg-[#3b2f4a] rounded-xl p-4 flex gap-4"
         >
-          {/* الصورة */}
+      
           <div className="flex-[0.35]">
             <img
               className="w-full h-full object-cover rounded"
@@ -86,7 +86,7 @@ export default function FlashSale({ FlashSale }) {
               <p className="text-white text-2xl font-bold">{el.price_after} $</p>
             </div>
 
-            {/* الخط العريض/الرفيع */}
+          
             <div className="flex w-full my-2">
               <div className="w-2/3 h-1 bg-amber-400 rounded-l"></div>
               <div className="w-1/3 h-[2px] bg-amber-200 self-center"></div>
@@ -95,8 +95,8 @@ export default function FlashSale({ FlashSale }) {
            
             <p className="text-sm text-white">{el.book_left} books left</p>
 
-            {/* زر السلة تحت على الشمال */}
-            <div className="flex justify-start mt-auto pt-2">
+            
+            <div className="flex justify-end mt-auto pt-2">
               <button
                 className="w-9 h-9 flex items-center justify-center rounded-md shadow-md hover:scale-105 transition"
                 style={{ backgroundColor: "rgba(217, 23, 108, 1)" }}
