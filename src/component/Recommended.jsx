@@ -3,7 +3,7 @@ import { FiHeart } from "react-icons/fi";
 
 export default function Recommended({ recommended }) {
   return (
-    <div className="container flex flex-col w-full h-dvh p-4 gap-5 ">
+    <div className="container flex flex-col w-full  p-4 gap-5 ">
       <h3 className=" text-2xl font-bold">Recomended For You</h3>
 
       <div className="flex flex-col lg:flex-row gap-3 p-3 ">
@@ -13,11 +13,11 @@ export default function Recommended({ recommended }) {
               key={el.documentId}
               className="container flex justify-between items-center shadow-2xl p-3 rounded"
             >
-              <div className="flex gap-3">
+              <div className="flex gap-3" >
                 <img
                   src={`http://localhost:1337${el.image.url}`}
                   alt=""
-                  className="w-70 h-70 object-cover p-2"
+                  className="w-50 object-cover p-2"
                 />
 
                 <div className="flex flex-col gap-3">
