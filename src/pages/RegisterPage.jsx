@@ -6,6 +6,7 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { useState } from "react";
+import { useAuthStore } from "../store/auth";
 
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -31,31 +32,34 @@ export default function RegisterPage() {
 
  
  
-  const registerSubmit = async (values, { resetForm }) => {
+const registerSubmit = async (values, { resetForm }) => {
   try {
-    const username = `${values.firstName} ${values.lastName}`;
+    const res = await axios.post("http://localhost:1337/api/auth/local/register", {
+      username: `${values.firstName} ${values.lastName}`,
+      email: values.email,
+      password: values.password,
+      firstName: values.firstName,
+      lastName: values.lastName,
+    });
 
-    const res = await axios.post(
-      "http://localhost:1337/api/auth/local/register",
-      {
-        username,
-        email: values.email,
-        password: values.password,
-      }
-    );
+   
+    useAuthStore.getState().setUser(res.data.user, res.data.jwt);
+
+   
+    localStorage.setItem("token", res.data.jwt);
+    localStorage.setItem("user", JSON.stringify(res.data.user));
 
     Swal.fire({ title: "Register success", icon: "success" });
+
     resetForm();
+
+   
+    navigate("/");
+
   } catch (err) {
-    consol.log(err)
-    Swal.fire({
-      icon: "error",
-      title: "Oops...",
-      text: err.response?.data?.error?.message || "Error occurred",
-    });
+    Swal.fire({ icon: "error", title: "Oops...", text: err.response?.data?.error?.message || "Error occurred" });
   }
 };
-
   return (
     <div className="min-h-screen flex justify-center items-center bg-gray-50 p-4">
       <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md flex flex-col gap-6">
