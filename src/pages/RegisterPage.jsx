@@ -29,21 +29,32 @@ export default function RegisterPage() {
     agree: Yup.bool().oneOf([true], "You must accept the terms"),
   });
 
+ 
+ 
   const registerSubmit = async (values, { resetForm }) => {
-    try {
-      const res = await axios.post("http://localhost:1337/api/auth/local/register", {
-        first_name: values.firstName,
-        last_name: values.lastName,
+  try {
+    const username = `${values.firstName} ${values.lastName}`;
+
+    const res = await axios.post(
+      "http://localhost:1337/api/auth/local/register",
+      {
+        username,
         email: values.email,
         password: values.password,
-        password_confirmation: values.confirmPassword,
-      });
-      Swal.fire({ title: "Register success", icon: "success" });
-      resetForm();
-    } catch (err) {
-      Swal.fire({ icon: "error", title: "Oops...", text: err.response?.data?.error?.message || "Error occurred" });
-    }
-  };
+      }
+    );
+
+    Swal.fire({ title: "Register success", icon: "success" });
+    resetForm();
+  } catch (err) {
+    consol.log(err)
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: err.response?.data?.error?.message || "Error occurred",
+    });
+  }
+};
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-gray-50 p-4">
