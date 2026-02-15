@@ -31,35 +31,43 @@ export default function RegisterPage() {
   });
 
  
- 
+
 const registerSubmit = async (values, { resetForm }) => {
   try {
-    const res = await axios.post("http://localhost:1337/api/auth/local/register", {
-      username: `${values.firstName} ${values.lastName}`,
-      email: values.email,
-      password: values.password,
-      firstName: values.firstName,
-      lastName: values.lastName,
-    });
+    const res = await axios.post(
+      "http://localhost:1337/api/auth/local/register",
+      {
+        username: `${values.firstName}_${values.lastName}`,
+        email: values.email,
+        password: values.password,
+      }
+    );
 
-   
-    useAuthStore.getState().setUser(res.data.user, res.data.jwt);
-
-   
+    // useAuthStore.getState().setUser(res.data.user, res.data.jwt);
+useAuthStore
+  .getState()
+  .login(res.data.jwt, res.data.user, true);
     localStorage.setItem("token", res.data.jwt);
     localStorage.setItem("user", JSON.stringify(res.data.user));
 
     Swal.fire({ title: "Register success", icon: "success" });
 
     resetForm();
-
-   
     navigate("/");
-
   } catch (err) {
-    Swal.fire({ icon: "error", title: "Oops...", text: err.response?.data?.error?.message || "Error occurred" });
+    console.log(err.response?.data);
+     console.log("FULL ERROR 👉", err);
+  console.log("RESPONSE 👉", err.response);
+  console.log("DATA 👉", err.response?.data); // 👈 مهم
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: err.response?.data?.error?.message || "Error occurred",
+    });
   }
 };
+
+
   return (
     <div className="min-h-screen flex justify-center items-center bg-gray-50 p-4">
       <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md flex flex-col gap-6">
@@ -80,14 +88,14 @@ const registerSubmit = async (values, { resetForm }) => {
                 </div>
               </div>
 
-              {/* Email */}
+             
               <div className="flex flex-col gap-2">
                 <label>Email</label>
                 <Field name="email" className="input input-bordered w-full p-2" placeholder="Enter Your Email" />
                 <ErrorMessage name="email" component={'p'} className="text-red-600" />
               </div>
 
-              {/* Password */}
+          
               <div className="flex flex-col gap-2 relative">
                 <label>Password</label>
                 <Field type={showPassword ? "text" : "password"} name="password" className="input input-bordered w-full pr-10 p-2" placeholder="Enter password" />
@@ -111,7 +119,7 @@ const registerSubmit = async (values, { resetForm }) => {
               </div>
               <ErrorMessage name="agree" component={'p'} className="text-red-600" />
 
-              {/* Submit */}
+        
               <button type="submit" className="text-white btn rounded-2xl bg-[rgba(217,23,108,1)] w-full py-2">Sign Up</button>
 
               <p className="text-center text-sm mt-2">

@@ -33,7 +33,7 @@ const loginSubmit = async (values) => {
       res.data.user,
       values.rememberMe
     );
-
+console.log(res.data);
     Swal.fire({ title: "Login success", icon: "success" });
     navigate("/");
   } catch (err) {

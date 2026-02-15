@@ -28,7 +28,7 @@ export default function HomeBefore() {
           const res =await axios.get(
             "http://localhost:1337/api/sales/?populate=*")
             setSale(res.data.data)
-            console.log(res.data.data)
+            
         }catch(err){
           console.log(err)
         }
