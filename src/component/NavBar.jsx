@@ -1,72 +1,183 @@
 
 
-
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
 import { FaShoppingCart, FaHeart } from "react-icons/fa";
+import Swal from "sweetalert2";
 
 import logo from "../assets/images/book-bookmark 1.png";
 import { useAuthStore } from "../store/auth";
+import { useCartStore } from "../store/CartStore";
 
 export default function NavBar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
-  const user = useAuthStore((state) => state.user); 
-  
+
+  const user = useAuthStore((state) => state.user);
+  const logout = useAuthStore((state) => state.logout);
+
+  // 🛒 الكارت
+  const cart = useCartStore((state) => state.cart);
+
+  const totalItems = cart.reduce(
+    (acc, item) => acc + item.quantity,
+    0
+  );
+
+  // 🚪 Logout with confirmation
+  const handleLogout = () => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You will be logged out!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, logout",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        logout();
+        navigate("/login");
+
+        Swal.fire({
+          icon: "success",
+          title: "Logged out!",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      }
+    });
+  };
 
   return (
     <div className="fixed top-0 left-0 w-full h-[92px] bg-[rgba(255,255,255,0.5)] z-50 flex justify-between items-center px-10">
-     
+
+      {/* Logo + Links */}
       <div className="flex gap-2 items-center">
         <img src={logo} alt="logo" className="h-10" />
-        <Link to="/" className="text-2xl text-white font-semibold hidden md:inline-block border-r-2 px-2">
-          Book Shop
-        </Link>
-        <Link to="/" className="text-2xl text-white hidden md:inline-block px-2">Home</Link>
-        <Link to="/books" className="text-2xl text-white hidden md:inline-block px-2">Books</Link>
-        <Link to="/about" className="text-2xl text-white hidden md:inline-block px-2">About Us</Link>
+
+        <NavLink
+          to="/"
+          className={({ isActive }) =>
+            `text-2xl hidden md:inline-block px-2 ${
+              isActive ? "text-orange-500" : "text-white"
+            }`
+          }
+        >
+          Home
+        </NavLink>
+
+        <NavLink
+          to="/books"
+          className={({ isActive }) =>
+            `text-2xl hidden md:inline-block px-2 ${
+              isActive ? "text-orange-500" : "text-white"
+            }`
+          }
+        >
+          Books
+        </NavLink>
+
+        <NavLink
+          to="/about"
+          className={({ isActive }) =>
+            `text-2xl hidden md:inline-block px-2 ${
+              isActive ? "text-orange-500" : "text-white"
+            }`
+          }
+        >
+          About Us
+        </NavLink>
       </div>
 
-    
+      {/* Desktop */}
       <div className="hidden md:flex gap-4 items-center">
         {user ? (
           <>
+            {/* User Info */}
             <div className="flex flex-col items-center text-white text-sm">
               <span>{user.username}</span>
-              <span className="text-[rgba(200,200,200,0.8)] text-xs">{user.email}</span>
+              <span className="text-[rgba(200,200,200,0.8)] text-xs">
+                {user.email}
+              </span>
             </div>
-            <img src={user.avatar || "https://via.placeholder.com/40"} alt="avatar" className="w-10 h-10 rounded-full object-cover" />
-            <button className="text-white">
-              <FaShoppingCart size={20} />
+
+            <img
+              src={user.avatar || "https://via.placeholder.com/40"}
+              alt="avatar"
+              className="w-10 h-10 rounded-full object-cover"
+            />
+
+            {/* 🛒 Cart */}
+            <button
+              onClick={() => navigate("/cart")}
+              className="relative"
+            >
+              <FaShoppingCart
+                size={20}
+                className={`transition ${
+                  totalItems > 0 ? "text-red-500" : "text-white"
+                }`}
+              />
+
+              {totalItems > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                  {totalItems}
+                </span>
+              )}
             </button>
+
+            {/* ❤️ Favorites */}
             <button className="text-white">
               <FaHeart size={20} />
+            </button>
+
+            {/* 🚪 Logout */}
+            <button
+              onClick={handleLogout}
+              className="bg-red-500 px-4 py-2 rounded text-white hover:bg-red-600 transition"
+            >
+              Logout
             </button>
           </>
         ) : (
           <>
-            <button onClick={() => navigate("/login")} className="bg-[rgba(217,23,108,1)] px-4 py-2 rounded text-white">
+            <button
+              onClick={() => navigate("/login")}
+              className="bg-[rgba(217,23,108,1)] px-4 py-2 rounded text-white"
+            >
               Log in
             </button>
-            <button onClick={() => navigate("/register")} className="bg-white px-4 py-2 rounded text-[rgba(217,23,108,1)]">
+
+            <button
+              onClick={() => navigate("/register")}
+              className="bg-white px-4 py-2 rounded text-[rgba(217,23,108,1)]"
+            >
               Sign Up
             </button>
           </>
         )}
       </div>
 
-      {/* Mobile Menu Toggle */}
+      {/* Mobile Toggle */}
       <div className="md:hidden">
         <button onClick={() => setMenuOpen(!menuOpen)}>
-          {menuOpen ? <AiOutlineClose size={25} className="text-white" /> : <AiOutlineMenu size={25} className="text-white" />}
+          {menuOpen ? (
+            <AiOutlineClose size={25} className="text-white" />
+          ) : (
+            <AiOutlineMenu size={25} className="text-white" />
+          )}
         </button>
       </div>
 
       {/* Mobile Menu */}
       {menuOpen && (
         <div className="absolute top-[92px] left-0 w-full bg-white flex flex-col items-center py-4 space-y-3 shadow-md md:hidden">
-          <Link to="/" className="text-2xl text-[rgba(217,23,108,1)]">Book Shop</Link>
+          <Link to="/" className="text-2xl text-[rgba(217,23,108,1)]">
+            Book Shop
+          </Link>
+
           <Link to="/" className="text-xl text-gray-800">Home</Link>
           <Link to="/books" className="text-xl text-gray-800">Books</Link>
           <Link to="/about" className="text-xl text-gray-800">About Us</Link>
@@ -77,18 +188,56 @@ export default function NavBar() {
                 <span className="font-semibold">{user.username}</span>
                 <span className="text-sm text-gray-500">{user.email}</span>
               </div>
-              <img src={user.avatar || "https://via.placeholder.com/40"} alt="avatar" className="w-10 h-10 rounded-full object-cover" />
-              <button className="w-3/4 py-2 flex items-center justify-center gap-2 bg-[rgba(217,23,108,1)] text-white rounded">
-                <FaShoppingCart size={20} /> Cart
+
+              <img
+                src={user.avatar || "https://via.placeholder.com/40"}
+                alt="avatar"
+                className="w-10 h-10 rounded-full object-cover"
+              />
+
+              {/* 🛒 Cart */}
+              <button
+                onClick={() => navigate("/cart")}
+                className="w-3/4 py-2 flex items-center justify-center gap-2 bg-[rgba(217,23,108,1)] text-white rounded relative"
+              >
+                <FaShoppingCart size={20} />
+                Cart
+
+                {totalItems > 0 && (
+                  <span className="absolute top-1 right-3 bg-white text-[rgba(217,23,108,1)] text-xs px-2 rounded-full">
+                    {totalItems}
+                  </span>
+                )}
               </button>
+
+              {/* ❤️ Favorites */}
               <button className="w-3/4 py-2 flex items-center justify-center gap-2 border border-[rgba(217,23,108,1)] text-[rgba(217,23,108,1)] rounded">
                 <FaHeart size={20} /> Favorites
+              </button>
+
+              {/* 🚪 Logout */}
+              <button
+                onClick={handleLogout}
+                className="w-3/4 py-2 bg-red-500 text-white rounded"
+              >
+                Logout
               </button>
             </>
           ) : (
             <>
-              <button onClick={() => navigate("/login")} className="w-3/4 py-2 bg-[rgba(217,23,108,1)] text-white rounded">Log in</button>
-              <button onClick={() => navigate("/register")} className="w-3/4 py-2 border border-[rgba(217,23,108,1)] text-[rgba(217,23,108,1)] rounded">Sign Up</button>
+              <button
+                onClick={() => navigate("/login")}
+                className="w-3/4 py-2 bg-[rgba(217,23,108,1)] text-white rounded"
+              >
+                Log in
+              </button>
+
+              <button
+                onClick={() => navigate("/register")}
+                className="w-3/4 py-2 border border-[rgba(217,23,108,1)] text-[rgba(217,23,108,1)] rounded"
+              >
+                Sign Up
+              </button>
             </>
           )}
         </div>

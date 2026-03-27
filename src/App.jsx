@@ -7,7 +7,10 @@ import PublicLayout from "./pages/PublicLayout";
 import HomeBefore from "./pages/HomeBefore";
 import { useAuthStore } from "./store/auth";
 import AboutUs from "./pages/AboutUs";
-
+import Books from "./pages/Books";
+import BooksList from "./pages/BooksList";
+import SingleBook from "./pages/SingleBook";
+import Cart from "./pages/Cart";
 export default function App() {
 
     const loadUserFromStorage = useAuthStore((state) => state.loadUserFromStorage);
@@ -27,7 +30,15 @@ export default function App() {
           <Route path="/login" element={<LoginPage />} />
         </Route>
         <Route path="/about" element={<AboutUs />} />
+ <Route path="/books" element={<Books />}>
+  <Route index element={<BooksList />} />
+ 
+</Route>
+<Route path="/books/:id" element={<SingleBook />} />
+<Route path="/cart" element={<Cart />} />
+
       </Routes>
+      
     </BrowserRouter>
   );
 }
