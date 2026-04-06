@@ -1,21 +1,59 @@
 // ServicesGrid.jsx
 import React from "react";
 
+// export default function ServicesGrid({ services }) {
+//   return (
+//     <div className="container mt-10 flex justify-center items-center">
+//       <div className="container p-5 flex justify-center items-center grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+//         {services.map((el) => (
+//           <div key={el.documentId} className="flex flex-col gap-2 shadow-2xl p-4 rounded-lg">
+//             {el.image?.url && (
+//               <img
+//                 className="w-[40px] h-[40px] object-cover"
+//                 src={`http://localhost:1337${el.image.url}`}
+//                 alt={el.h2 || "service image"}
+//               />
+//             )}
+//             <h2 className="font-bold ">{el.h2}</h2>
+//             <p>{el.paragraph}</p>
+//           </div>
+//         ))}
+//       </div>
+//     </div>
+//   );
+// }
+
+import { useEffect } from "react";
+import WOW from "wowjs";
+import "animate.css";
+
 export default function ServicesGrid({ services }) {
+  useEffect(() => {
+    new WOW.WOW({ live: false }).init();
+  }, []);
+
   return (
     <div className="container mt-10 flex justify-center items-center">
-      <div className="container p-5 flex justify-center items-center grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-        {services.map((el) => (
-          <div key={el.documentId} className="flex flex-col gap-2 shadow-2xl p-4 rounded-lg">
+      <div className="container p-5 flex justify-center items-center grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {services.map((el, index) => (
+          <div
+            key={el.documentId}
+            className="flex flex-col gap-2 shadow-2xl p-6 rounded-lg bg-white wow animate__animated animate__fadeInUp wow"
+            data-wow-delay={`${0.2 * index}s`} // staggered effect
+          >
             {el.image?.url && (
               <img
-                className="w-[40px] h-[40px] object-cover"
+                className="w-[60px] h-[60px] object-cover rounded-full animate__animated animate__zoomIn"
                 src={`http://localhost:1337${el.image.url}`}
                 alt={el.h2 || "service image"}
               />
             )}
-            <h2 className="font-bold ">{el.h2}</h2>
-            <p>{el.paragraph}</p>
+            <h2 className="font-bold text-lg wow animate__animated animate__fadeInUp" data-wow-delay={`${0.2 * index + 0.1}s`}>
+              {el.h2}
+            </h2>
+            <p className="text-gray-600 wow animate__animated animate__fadeIn" data-wow-delay={`${0.2 * index + 0.2}s`}>
+              {el.paragraph}
+            </p>
           </div>
         ))}
       </div>
