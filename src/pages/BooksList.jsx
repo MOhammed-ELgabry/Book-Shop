@@ -6,10 +6,15 @@ import Swal from "sweetalert2";
 import { useCartStore } from "../store/CartStore";
 import { useLoveBooksStore } from "../store/LoveBooks";
 import { useAuthStore } from "../store/auth";
-
+import BooksListSkeleton from "../component/skeletons/books/BooksListSkeleton";
 export default function BookList() {
-  const { currentBooks, currentPage, totalPages, setCurrentPage } =
-    useOutletContext();
+  const {
+  currentBooks,
+  currentPage,
+  totalPages,
+  setCurrentPage,
+  loading
+} = useOutletContext();
 
   const navigate = useNavigate();
   const addToCart = useCartStore((state) => state.addToCart);
@@ -178,6 +183,7 @@ const handleAddToLoveBooks = (book, e) => {
     });
   }
 };
+if (loading) return <BooksListSkeleton />;
   return (
     <div className="flex flex-col gap-6">
       {currentBooks.map((book) => (

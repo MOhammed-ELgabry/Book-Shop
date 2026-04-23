@@ -5,13 +5,25 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import axios from "axios";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuthStore } from "../store/auth";
+import LoginSkeleton from "../component/skeletons/auth/LoginSkeleton";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(true);
+
   const navigate = useNavigate();
   const setUser = useAuthStore((state) => state.setUser);
+
+  // 👇 Skeleton loading
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const initialValues = { identifier: "", password: "" };
 
@@ -27,7 +39,6 @@ export default function LoginPage() {
         password: values.password,
       });
 
-      // ✅ store + persistence
       setUser(res.data.user, res.data.jwt);
 
       Swal.fire({ title: "Login success", icon: "success" });
@@ -41,15 +52,30 @@ export default function LoginPage() {
     }
   };
 
+  // 👇 هنا الشرط
+  if (loading) return <LoginSkeleton />;
+
   return (
     <div className="min-h-screen flex justify-center items-center bg-gray-50 p-4">
       <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md flex flex-col gap-6">
-        <h2 className="text-center text-[rgba(217,23,108,1)] text-2xl font-semibold">Welcome Back</h2>
-        <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={loginSubmit}>
+        
+        <h2 className="text-center text-[rgba(217,23,108,1)] text-2xl font-semibold">
+          Welcome Back
+        </h2>
+
+        <Formik
+          initialValues={initialValues}
+          validationSchema={validationSchema}
+          onSubmit={loginSubmit}
+        >
           <Form className="flex flex-col gap-6">
+
             <div className="flex flex-col gap-2">
               <label>Email</label>
-              <Field name="identifier" className="input input-bordered w-full p-2" placeholder="Enter your email" />
+              <Field
+                name="identifier"
+                className="input input-bordered w-full p-2"
+              />
               <ErrorMessage name="identifier" component="p" className="text-red-600" />
             </div>
 
@@ -59,9 +85,9 @@ export default function LoginPage() {
                 type={showPassword ? "text" : "password"}
                 name="password"
                 className="input input-bordered w-full pr-10 p-2"
-                placeholder="Enter password"
               />
               <ErrorMessage name="password" component="p" className="text-red-600" />
+
               <span
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer"
@@ -70,7 +96,10 @@ export default function LoginPage() {
               </span>
             </div>
 
-            <button type="submit" className="text-white rounded-2xl bg-[rgba(217,23,108,1)] w-full py-2">Login</button>
+            <button className="bg-pink-600 text-white py-2 rounded-2xl">
+              Login
+            </button>
+
           </Form>
         </Formik>
       </div>
