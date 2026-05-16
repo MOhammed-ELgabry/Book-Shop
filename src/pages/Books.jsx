@@ -5,7 +5,7 @@ import NavBar from "../component/NavBar";
 import { Search, Mic } from "lucide-react";
 import BooksPageSkeleton from "../component/skeletons/books/BooksPageSkeleton";
 import bgImage from "../assets/images/533643aa8db82414f48d43a992d009dda3961386.png";
-import WOW from "wowjs";
+
 import "animate.css";
 
 export default function Books() {
@@ -14,42 +14,12 @@ export default function Books() {
   const [searchTerm, setSearchTerm] = useState("");
   const booksPerPage = 12;
   const [selectedCategory, setSelectedCategory] = useState("");
-// const isLoading = books.length === 0;
+
 const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    new WOW.WOW({ live: false }).init();
-  }, []);
+
 
   
-// useEffect(() => {
-//   async function fetchBooks() {
-//     try {
-//       const res = await fetch("http://localhost:1337/api/books?populate=*");
-//       const data = await res.json();
 
-//       const formattedBooks = data.data.map((item) => ({
-//         id: item.id,
-//         name: item.name || "No title",
-//         author: item.auther || "Unknown author",
-//         rate: item.rate || 0,
-//         price: item.price || 0,
-//         category: item.category?.name || "Unknown",
-//         img: item.img?.url
-//           ? `http://localhost:1337${item.img.url}`
-//           : "https://via.placeholder.com/120x180",
-//       }));
-
-//       setBooks(formattedBooks);
-
-//     } catch (error) {
-//       console.error("Error fetching books:", error);
-//     } finally {
-//       setLoading(false); // 🔥 هنا السر
-//     }
-//   }
-
-//   fetchBooks();
-// }, []);
 useEffect(() => {
   async function fetchBooks() {
     try {
@@ -110,11 +80,11 @@ const filteredBooks = books.filter((b) => {
 
       {/* 🔥 HERO */}
       <div
-        className="w-full h-[200px] md:h-[300px] bg-cover bg-center bg-fixed relative wow animate__animated animate__fadeIn"
+        className="w-full h-[200px] md:h-[300px] bg-cover bg-center bg-fixed relative animate__animated animate__fadeIn"
         style={{ backgroundImage: `url(${bgImage})` }}
       >
         <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-          <h2 className="text-white text-3xl md:text-5xl font-bold wow animate__animated animate__fadeInDown">
+          <h2 className="text-white text-3xl md:text-5xl font-bold  animate__animated animate__fadeInDown">
             Explore Books
           </h2>
         </div>
@@ -123,7 +93,7 @@ const filteredBooks = books.filter((b) => {
       <div className="flex flex-col md:flex-row w-full flex-1">
 
         {/* 🔥 SIDEBAR */}
-        <aside className="w-full md:w-1/4 p-5 bg-gray-100 md:bg-gray-200 wow animate__animated animate__fadeInLeft">
+        <aside className="w-full md:w-1/4 p-5 bg-gray-100 md:bg-gray-200  animate__animated animate__fadeInLeft">
           <h2 className="text-xl font-semibold mb-4">Filter by Category</h2>
 
           <div className="flex flex-col gap-2">
@@ -137,8 +107,8 @@ const filteredBooks = books.filter((b) => {
                 className={`flex items-center gap-2 cursor-pointer p-2 rounded transition-all duration-300 
                 hover:bg-pink-100 hover:scale-[1.02] 
                 ${selectedCategory === cat ? "bg-pink-200 font-semibold" : ""}
-                wow animate__animated animate__fadeInUp`}
-                data-wow-delay={`${0.1 * index}s`}
+                 animate__animated animate__fadeInUp`}
+                data-delay={`${0.1 * index}s`}
               >
                 <input
                   type="checkbox"
@@ -155,7 +125,7 @@ const filteredBooks = books.filter((b) => {
         </aside>
 
         {/* 🔥 CONTENT */}
-        <main className="w-full md:w-3/4 p-5 flex flex-col gap-6 wow animate__animated animate__fadeInRight">
+        <main className="w-full md:w-3/4 p-5 flex flex-col gap-6  animate__animated animate__fadeInRight">
 
           {/* 🔍 SEARCH */}
           <div className="flex items-center bg-white rounded-full px-4 py-3 shadow-md transition-all duration-300 

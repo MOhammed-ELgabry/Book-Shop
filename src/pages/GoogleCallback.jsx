@@ -1,0 +1,71 @@
+
+import { useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import Swal from "sweetalert2";
+
+import api from "../api/api";
+import { useAuthStore } from "../store/auth";
+
+export default function GoogleCallback() {
+  const [params] = useSearchParams();
+
+  const navigate = useNavigate();
+
+  const setUser = useAuthStore((state) => state.setUser);
+
+  useEffect(() => {
+    const loginWithGoogle = async () => {
+      try {
+        // 🔥 jwt الحقيقي من سترابي
+        const jwt = params.get("access_token");
+
+        console.log("STRAPI JWT:", jwt);
+
+        if (!jwt) {
+          navigate("/login");
+          return;
+        }
+
+        // 🔥 هات بيانات اليوزر الحقيقي
+        const res = await api.get("/users/me", {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        });
+
+        const user = res.data;
+
+        console.log("GOOGLE USER:", user);
+
+        // 🔥 خزّن اليوزر الحقيقي + jwt
+        setUser(user, jwt);
+
+        Swal.fire({
+          icon: "success",
+          title: "Login Success",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+
+        navigate("/");
+      } catch (err) {
+        console.log("GOOGLE LOGIN ERROR:", err);
+
+        Swal.fire({
+          icon: "error",
+          title: "Google Login Failed",
+        });
+
+        navigate("/login");
+      }
+    };
+
+    loginWithGoogle();
+  }, []);
+
+  return (
+    <div className="min-h-screen flex items-center justify-center text-xl font-semibold">
+      Logging in with Google...
+    </div>
+  );
+}

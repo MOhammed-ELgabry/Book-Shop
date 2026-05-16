@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
@@ -32,22 +31,34 @@ function AppContent() {
 
   const hydrated = useAuthStore((state) => state.hydrated);
 
-  // Load user once on app start
+  // ======================
+  // LOAD AUTH FROM STORAGE
+  // ======================
   useEffect(() => {
     loadUserFromStorage();
-  }, []);
+  }, [loadUserFromStorage]);
 
-  // ⛔ مهم جدًا: منع أي Routes تشتغل قبل ما الـ auth يتحمل
+  // ======================
+  // WAIT FOR HYDRATION
+  // ======================
   if (!hydrated) {
-    return null; // أو حط GlobalLoader لو عندك
+    return (
+      <div className="w-full h-screen flex items-center justify-center text-xl font-semibold">
+        Loading...
+      </div>
+    );
   }
 
   return (
     <Routes>
-      {/* Home */}
+      {/* ====================== */}
+      {/* HOME */}
+      {/* ====================== */}
       <Route path="/" element={<HomeBefore />} />
 
-      {/* Auth (Public Routes) */}
+      {/* ====================== */}
+      {/* AUTH */}
+      {/* ====================== */}
       <Route element={<PublicLayout />}>
         <Route
           path="/register"
@@ -68,17 +79,20 @@ function AppContent() {
         />
       </Route>
 
-      {/* About */}
+      {/* ====================== */}
+      {/* PUBLIC PAGES */}
+      {/* ====================== */}
       <Route path="/about" element={<AboutUs />} />
 
-      {/* Books */}
       <Route path="/books" element={<Books />}>
         <Route index element={<BooksList />} />
       </Route>
 
       <Route path="/books/:id" element={<SingleBook />} />
 
-      {/* Protected Routes */}
+      {/* ====================== */}
+      {/* PROTECTED */}
+      {/* ====================== */}
       <Route
         path="/cart"
         element={

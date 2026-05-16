@@ -16,9 +16,9 @@ import FlashSale from "../component/FlashSale";
 import { FaRegStar, FaShoppingCart, FaStar, FaStarHalfAlt } from "react-icons/fa";
 import { FiHeart } from "react-icons/fi";
 import Recommended from "../component/Recommended";
-import WOW from "wowjs";
 
-import "animate.css";
+
+
 
 export default function HomeBefore() {
   const [useServices, setUseServices] = useState([]);
@@ -51,7 +51,7 @@ export default function HomeBefore() {
       } catch (err) {
         console.log(err);
       }
-      fetchData()
+      
     };
     fetchData();
   }, []);
