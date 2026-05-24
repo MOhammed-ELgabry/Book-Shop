@@ -1,4 +1,3 @@
-
 // import { useState, useEffect } from "react";
 // import { useAuthStore } from "../store/auth";
 // import Swal from "sweetalert2";
@@ -12,6 +11,9 @@
 // export default function ProfilePage() {
 //   const { user, token, fetchProfile } = useAuthStore();
 
+//   const [profileId, setProfileId] = useState(null);
+//   const [loading, setLoading] = useState(false);
+
 //   const [formData, setFormData] = useState({
 //     firstName: "",
 //     lastName: "",
@@ -19,31 +21,28 @@
 //     address: "",
 //   });
 
-//   const [profileId, setProfileId] = useState(null);
-
 //   const [avatarFile, setAvatarFile] = useState(null);
-
 //   const [avatarPreview, setAvatarPreview] = useState("");
 
-//   const [loading, setLoading] = useState(false);
-
 //   // ======================
-//   // FETCH PROFILE
+//   // LOAD PROFILE (FIXED)
 //   // ======================
 //   useEffect(() => {
 //     const loadProfile = async () => {
-//       if (!user?.id || !token) return;
-//  console.log("TOKEN INSIDE REQUEST:", token);
+//       if (!token || !user?.id) return;
+
 //       try {
-//         const res = await api.get(
-//   `/users/me?populate[profile][populate]=avatar`
-// );
+//      const res = await api.get("/users/me?populate=profile");
 
-// const profile = res.data?.profile;
+// console.log("USER DATA:", res.data);
 
-//         if (!profile) return;
+//         const userData = res.data;
+//         const profile = userData?.profile;
 
-//         console.log("PROFILE:", profile);
+//         if (!profile) {
+//           Swal.fire("Info", "No profile found for this user", "info");
+//           return;
+//         }
 
 //         setProfileId(profile.documentId);
 
@@ -54,23 +53,18 @@
 //           address: profile.address || "",
 //         });
 
-//         // avatar from strapi upload
-//         let avatarUrl = "";
+//         const avatar = profile?.avatar;
 
-//         if (profile.avatar?.url) {
-//           avatarUrl = profile.avatar.url.startsWith("http")
-//             ? profile.avatar.url
-//             : `${BASE_URL}${profile.avatar.url}`;
+//         if (avatar?.url) {
+//           setAvatarPreview(
+//             avatar.url.startsWith("http")
+//               ? avatar.url
+//               : `${BASE_URL}${avatar.url}`
+//           );
 //         }
-
-//         // fallback google avatar
-//         else if (user?.avatar) {
-//           avatarUrl = user.avatar;
-//         }
-
-//         setAvatarPreview(avatarUrl);
 //       } catch (err) {
 //         console.log("FETCH PROFILE ERROR:", err);
+//         Swal.fire("Error", "Failed to load profile", "error");
 //       }
 //     };
 
@@ -92,76 +86,49 @@
 //   // ======================
 //   const handleAvatarChange = (e) => {
 //     const file = e.target.files?.[0];
-
 //     if (!file) return;
 
 //     setAvatarFile(file);
-
-//     // preview only
-//     const localPreview = URL.createObjectURL(file);
-
-//     setAvatarPreview(localPreview);
+//     setAvatarPreview(URL.createObjectURL(file));
 //   };
 
 //   // ======================
-//   // UPDATE PROFILE
+//   // SUBMIT (FIXED STRAPI FLOW)
 //   // ======================
 //   const handleSubmit = async (e) => {
 //     e.preventDefault();
 
-//     if (!profileId) return;
+//     if (!profileId) {
+//       Swal.fire("Error", "Profile not found", "error");
+//       return;
+//     }
 
 //     setLoading(true);
 
 //     try {
 //       let avatarId = null;
 
-//       // upload new image
+//       // upload avatar
 //       if (avatarFile) {
 //         const form = new FormData();
-
 //         form.append("files", avatarFile);
 
 //         const uploadRes = await api.post("/upload", form);
-
 //         avatarId = uploadRes.data?.[0]?.id;
-
-//         console.log("UPLOADED IMAGE:", uploadRes.data);
 //       }
-
+// console.log("PAYLOAD:", {
+//   ...formData,
+//   avatar: avatarPreview,
+// });
 //       // update profile
-//       await api.put(`/profiles/${profileId}`, {
-//         data: {
-//           ...formData,
+// await api.put(`/profiles/${profileId}`, {
+//   data: {
+//     ...formData,
+//     avatar: avatarId, // 🔥 مهم: ID مش URL
+//   },
+// });
 
-//           ...(avatarId && {
-//             avatar: avatarId,
-//           }),
-//         },
-//       });
-
-//       // refresh auth store
 //       await fetchProfile();
-
-//       // refresh local preview
-//       if (avatarId) {
-//         const refreshed = await api.get(
-//           `/profiles/${profileId}?populate=*`
-//         );
-
-//         const updatedAvatar =
-//           refreshed.data?.data?.avatar?.url;
-
-//         if (updatedAvatar) {
-//           setAvatarPreview(
-//             updatedAvatar.startsWith("http")
-//               ? updatedAvatar
-//               : `${BASE_URL}${updatedAvatar}`
-//           );
-//         }
-//       }
-
-//       setAvatarFile(null);
 
 //       Swal.fire({
 //         icon: "success",
@@ -169,6 +136,8 @@
 //         timer: 1500,
 //         showConfirmButton: false,
 //       });
+
+//       setAvatarFile(null);
 //     } catch (err) {
 //       console.log("UPDATE PROFILE ERROR:", err);
 
@@ -187,35 +156,29 @@
 
 //       <div
 //         className="w-full h-[350px] bg-cover bg-center"
-//         style={{
-//           backgroundImage: `url(${bgImage})`,
-//         }}
+//         style={{ backgroundImage: `url(${bgImage})` }}
 //       />
 
 //       <div className="flex flex-col items-center py-10 bg-gray-100 min-h-screen">
-        
+
 //         {/* AVATAR */}
 //         <div className="relative mb-6">
 //           <img
-//             src={
-//               avatarPreview ||
-//               "https://i.pravatar.cc/150"
-//             }
+//             src={avatarPreview || "https://i.pravatar.cc/150"}
 //             className="w-28 h-28 rounded-full object-cover border-4 border-white shadow"
-//             alt="User Avatar"
+//             alt="avatar"
 //           />
 
 //           <input
-//             id="avatarInput"
 //             type="file"
-//             accept="image/*"
+//             id="avatarInput"
 //             hidden
 //             onChange={handleAvatarChange}
 //           />
 
 //           <label
 //             htmlFor="avatarInput"
-//             className="absolute bottom-1 right-1 bg-pink-500 text-white p-2 rounded-full cursor-pointer text-xs"
+//             className="absolute bottom-1 right-1 bg-pink-500 text-white p-2 rounded-full cursor-pointer"
 //           >
 //             ✏️
 //           </label>
@@ -281,8 +244,8 @@
 //       <Footer />
 //     </>
 //   );
-// }
-
+// } 
+//ما قبل اخر تحديث
 import { useState, useEffect } from "react";
 import { useAuthStore } from "../store/auth";
 import Swal from "sweetalert2";
@@ -290,12 +253,16 @@ import api from "../api/api";
 import NavBar from "../component/NavBar";
 import Footer from "../component/Footer";
 import bgImage from "../assets/images/533643aa8db82414f48d43a992d009dda3961386.png";
+import { normalizeUser } from "../utils/normalizeUser";
 
 const BASE_URL = "http://localhost:1337";
 
 export default function ProfilePage() {
 
-  const { user, token, fetchProfile } = useAuthStore();
+  const { user, token, setUser } = useAuthStore();
+
+  const [profileId, setProfileId] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -304,13 +271,8 @@ export default function ProfilePage() {
     address: "",
   });
 
-  const [profileId, setProfileId] = useState(null);
-
   const [avatarFile, setAvatarFile] = useState(null);
-
   const [avatarPreview, setAvatarPreview] = useState("");
-
-  const [loading, setLoading] = useState(false);
 
   // ======================
   // LOAD PROFILE
@@ -319,28 +281,28 @@ export default function ProfilePage() {
 
     const loadProfile = async () => {
 
-      if (!user?.id || !token) {
-        return;
-      }
+      if (!token || !user?.id) return;
 
       try {
-
-        console.log("FETCHING PROFILE...");
 
         const res = await api.get(
           `/profiles?filters[users_permissions_user][id][$eq]=${user.id}&populate=*`
         );
 
-        console.log("PROFILE RESPONSE:", res.data);
-
         const profile = res.data?.data?.[0];
 
         if (!profile) {
-          console.log("NO PROFILE FOUND");
+
+          Swal.fire(
+            "Info",
+            "No profile found for this user",
+            "info"
+          );
+
           return;
         }
 
-        setProfileId(profile.id);
+        setProfileId(profile.documentId);
 
         setFormData({
           firstName: profile.firstName || "",
@@ -349,31 +311,50 @@ export default function ProfilePage() {
           address: profile.address || "",
         });
 
-        // 🔥 avatar
-        let avatarUrl = "";
-
+        // ======================
+        // AVATAR PREVIEW
+        // ======================
         if (profile?.avatar?.url) {
 
-          avatarUrl = profile.avatar.url.startsWith("http")
-            ? profile.avatar.url
-            : `${BASE_URL}${profile.avatar.url}`;
+          const avatarUrl =
+            profile.avatar.url.startsWith("http")
+              ? profile.avatar.url
+              : `${BASE_URL}${profile.avatar.url}`;
 
-        } else if (user?.avatar) {
-
-          avatarUrl = user.avatar;
-
+          setAvatarPreview(avatarUrl);
         }
-
-        setAvatarPreview(avatarUrl);
 
       } catch (err) {
 
-        console.log("FETCH PROFILE ERROR:", err);
+        console.log(
+          "FETCH PROFILE ERROR:",
+          err
+        );
 
+        Swal.fire(
+          "Error",
+          "Failed to load profile",
+          "error"
+        );
       }
     };
 
     loadProfile();
+
+    // ======================
+    // CLEANUP OBJECT URL
+    // ======================
+    return () => {
+
+      if (
+        avatarPreview &&
+        avatarPreview.startsWith("blob:")
+      ) {
+        URL.revokeObjectURL(
+          avatarPreview
+        );
+      }
+    };
 
   }, [user?.id, token]);
 
@@ -399,19 +380,21 @@ export default function ProfilePage() {
 
     setAvatarFile(file);
 
-    const preview = URL.createObjectURL(file);
+    const previewUrl =
+      URL.createObjectURL(file);
 
-    setAvatarPreview(preview);
+    setAvatarPreview(previewUrl);
   };
 
   // ======================
-  // SUBMIT
+  // UPDATE PROFILE
   // ======================
   const handleSubmit = async (e) => {
 
     e.preventDefault();
 
     if (!profileId) {
+
       Swal.fire(
         "Error",
         "Profile not found",
@@ -427,35 +410,88 @@ export default function ProfilePage() {
 
       let avatarId = null;
 
-      // 🔥 upload avatar
+      // ======================
+      // UPLOAD AVATAR
+      // ======================
       if (avatarFile) {
 
         const form = new FormData();
 
-        form.append("files", avatarFile);
-
-        const uploadRes = await api.post(
-          "/upload",
-          form
+        form.append(
+          "files",
+          avatarFile
         );
 
-        avatarId = uploadRes.data?.[0]?.id;
+        const uploadRes =
+          await api.post(
+            "/upload",
+            form
+          );
+
+        avatarId =
+          uploadRes.data?.[0]?.id;
       }
 
-      // 🔥 update profile
-      await api.put(`/profiles/${profileId}`, {
-        data: {
-          ...formData,
-          ...(avatarId && {
-            avatar: avatarId,
-          }),
-        },
-      });
+      // ======================
+      // PREPARE UPDATE DATA
+      // ======================
+      const updatedData = {
+        ...formData,
+      };
 
-      // 🔥 refresh store
-      await fetchProfile();
+      // 🔥 only update avatar if uploaded
+      if (avatarId) {
+        updatedData.avatar = avatarId;
+      }
 
-      setAvatarFile(null);
+      // ======================
+      // UPDATE PROFILE
+      // ======================
+      await api.put(
+        `/profiles/${profileId}`,
+        {
+          data: updatedData,
+        }
+      );
+
+      // ======================
+      // REFETCH PROFILE
+      // ======================
+      const profileRes =
+        await api.get(
+          `/profiles?filters[users_permissions_user][id][$eq]=${user.id}&populate=*`
+        );
+
+      const updatedProfile =
+        profileRes.data?.data?.[0];
+
+      // ======================
+      // NORMALIZE USER
+      // ======================
+      const normalizedUser =
+        normalizeUser(
+          user,
+          updatedProfile
+        );
+
+      // ======================
+      // UPDATE STORE
+      // ======================
+      setUser(
+        normalizedUser,
+        token
+      );
+
+      // ======================
+      // UPDATE PREVIEW
+      // ======================
+      if (
+        normalizedUser.avatar
+      ) {
+        setAvatarPreview(
+          normalizedUser.avatar
+        );
+      }
 
       Swal.fire({
         icon: "success",
@@ -464,9 +500,14 @@ export default function ProfilePage() {
         showConfirmButton: false,
       });
 
+      setAvatarFile(null);
+
     } catch (err) {
 
-      console.log("UPDATE PROFILE ERROR:", err);
+      console.log(
+        "UPDATE PROFILE ERROR:",
+        err
+      );
 
       Swal.fire({
         icon: "error",
@@ -486,7 +527,8 @@ export default function ProfilePage() {
       <div
         className="w-full h-[350px] bg-cover bg-center"
         style={{
-          backgroundImage: `url(${bgImage})`,
+          backgroundImage:
+            `url(${bgImage})`,
         }}
       />
 
@@ -501,24 +543,24 @@ export default function ProfilePage() {
               "https://i.pravatar.cc/150"
             }
             className="w-28 h-28 rounded-full object-cover border-4 border-white shadow"
-            alt="User Avatar"
+            alt="avatar"
           />
 
           <input
-            id="avatarInput"
             type="file"
-            accept="image/*"
+            id="avatarInput"
             hidden
-            onChange={handleAvatarChange}
+            onChange={
+              handleAvatarChange
+            }
           />
 
           <label
             htmlFor="avatarInput"
-            className="absolute bottom-1 right-1 bg-pink-500 text-white p-2 rounded-full cursor-pointer text-xs"
+            className="absolute bottom-1 right-1 bg-pink-500 text-white p-2 rounded-full cursor-pointer"
           >
             ✏️
           </label>
-
         </div>
 
         {/* FORM */}
@@ -574,7 +616,9 @@ export default function ProfilePage() {
             disabled={loading}
             className="w-full bg-pink-500 text-white py-2 rounded"
           >
-            {loading ? "Updating..." : "Update"}
+            {loading
+              ? "Updating..."
+              : "Update"}
           </button>
 
         </form>

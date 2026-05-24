@@ -1,7 +1,7 @@
-
 // import { create } from "zustand";
 // import api from "../api/api";
-
+// import { signOut } from "firebase/auth";
+// import { auth } from "../firebase";
 // const BASE_URL = "http://localhost:1337";
 
 // export const useAuthStore = create((set, get) => ({
@@ -13,23 +13,36 @@
 //   // SET USER
 //   // ======================
 //   setUser: (userData, token) => {
+
+//     let avatar = userData?.avatar || null;
+
+//     // 🔥 normalize avatar
+//     if (
+//       avatar &&
+//       typeof avatar === "string" &&
+//       !avatar.startsWith("http")
+//     ) {
+//       avatar = `${BASE_URL}${avatar}`;
+//     }
+
 //     const normalizedUser = {
 //       ...userData,
-
-//       avatar:
-//         userData?.avatar &&
-//         !userData.avatar.startsWith("http")
-//           ? `${BASE_URL}${userData.avatar}`
-//           : userData.avatar || null,
+//       avatar,
 //     };
 
-//     localStorage.setItem("user", JSON.stringify(normalizedUser));
+//     localStorage.setItem(
+//       "user",
+//       JSON.stringify(normalizedUser)
+//     );
+
 //     localStorage.setItem("token", token);
 
 //     set({
 //       user: normalizedUser,
 //       token,
 //     });
+
+//     console.log("USER SAVED");
 //   },
 
 //   // ======================
@@ -37,60 +50,107 @@
 //   // ======================
 //   fetchProfile: async () => {
 //     try {
-//       const token = get().token;
 
-//       if (!token) return;
+//       const { user, token } = get();
 
+//       if (!user?.id || !token) {
+//         return;
+//       }
+
+//       // 🔥 get profile directly
 //       const res = await api.get(
-//         `/users/me?populate[profile][populate]=avatar`
+//         `/profiles?filters[users_permissions_user][id][$eq]=${user.id}&populate=*`
 //       );
 
-//       const me = res.data;
+//       const profile = res.data?.data?.[0];
 
-//       const profile = me.profile;
+//       if (!profile) {
+//         console.log("NO PROFILE FOUND");
+//         return;
+//       }
 
+//       // 🔥 avatar
+//       let avatar = user.avatar || null;
+
+//       if (profile?.avatar?.url) {
+//         avatar = profile.avatar.url.startsWith("http")
+//           ? profile.avatar.url
+//           : `${BASE_URL}${profile.avatar.url}`;
+//       }
+
+//       // 🔥 merge
 //       const mergedUser = {
-//         ...me,
+//         ...user,
 
-//         firstName: profile?.firstName || "",
-//         lastName: profile?.lastName || "",
-//         phone: profile?.phone || "",
-//         address: profile?.address || "",
+//         firstName: profile.firstName || "",
+//         lastName: profile.lastName || "",
+//         phone: profile.phone || "",
+//         address: profile.address || "",
 
-//         avatar: profile?.avatar?.url
-//           ? `${BASE_URL}${profile.avatar.url}`
-//           : null,
+//         avatar,
 //       };
 
-//       localStorage.setItem("user", JSON.stringify(mergedUser));
+//       localStorage.setItem(
+//         "user",
+//         JSON.stringify(mergedUser)
+//       );
 
 //       set({
 //         user: mergedUser,
 //       });
 
 //       console.log("PROFILE FETCHED SUCCESS");
+
 //     } catch (err) {
 //       console.log("FETCH PROFILE ERROR:", err);
 //     }
 //   },
 
 //   // ======================
-//   // LOAD STORAGE
+//   // LOAD USER
 //   // ======================
 //   loadUserFromStorage: () => {
-//     const storedUser = localStorage.getItem("user");
-//     const storedToken = localStorage.getItem("token");
 
-//     if (storedUser && storedToken) {
-//       set({
-//         user: JSON.parse(storedUser),
-//         token: storedToken,
-//         hydrated: true,
-//       });
+//     try {
 
-//       console.log("USER LOADED FROM STORAGE");
-//     } else {
+//       const storedUser = localStorage.getItem("user");
+//       const storedToken = localStorage.getItem("token");
+
+//       if (storedUser && storedToken) {
+
+//         let parsedUser = JSON.parse(storedUser);
+
+//         // 🔥 normalize avatar again
+//         if (
+//           parsedUser?.avatar &&
+//           !parsedUser.avatar.startsWith("http")
+//         ) {
+//           parsedUser.avatar = `${BASE_URL}${parsedUser.avatar}`;
+//         }
+
+//         set({
+//           user: parsedUser,
+//           token: storedToken,
+//           hydrated: true,
+//         });
+
+//         console.log("USER LOADED FROM STORAGE");
+
+//       } else {
+
+//         set({
+//           hydrated: true,
+//         });
+
+//       }
+
+//     } catch (err) {
+
+//       console.log("LOAD STORAGE ERROR:", err);
+
 //       set({
+//         user: null,
+//         token: null,
 //         hydrated: true,
 //       });
 //     }
@@ -99,23 +159,42 @@
 //   // ======================
 //   // LOGOUT
 //   // ======================
-//   logout: () => {
-//     localStorage.removeItem("user");
-//     localStorage.removeItem("token");
+//  // ======================
+// // LOGOUT
+// // ======================
+// logout: async () => {
 
-//     set({
-//       user: null,
-//       token: null,
-//     });
-//   },
-// }));import { create } from "zustand";
+//   try {
+
+//     // 🔥 Firebase logout
+//     await signOut(auth);
+
+//   } catch (err) {
+
+//     console.log("FIREBASE LOGOUT ERROR:", err);
+
+//   }
+
+//   // 🔥 clear storage
+//   localStorage.removeItem("user");
+//   localStorage.removeItem("token");
+
+//   // 🔥 reset state
+//   set({
+//     user: null,
+//     token: null,
+//   });
+
+//   console.log("LOGOUT SUCCESS");
+// },
+// }));
+// ده قبل اخر تعديل 
 
 import { create } from "zustand";
-import api from "../api/api";
+import { signOut } from "firebase/auth";
+import { auth } from "../firebase";
 
-const BASE_URL = "http://localhost:1337";
-
-export const useAuthStore = create((set, get) => ({
+export const useAuthStore = create((set) => ({
   user: null,
   token: null,
   hydrated: false,
@@ -125,96 +204,19 @@ export const useAuthStore = create((set, get) => ({
   // ======================
   setUser: (userData, token) => {
 
-    let avatar = userData?.avatar || null;
-
-    // 🔥 normalize avatar
-    if (
-      avatar &&
-      typeof avatar === "string" &&
-      !avatar.startsWith("http")
-    ) {
-      avatar = `${BASE_URL}${avatar}`;
-    }
-
-    const normalizedUser = {
-      ...userData,
-      avatar,
-    };
-
     localStorage.setItem(
       "user",
-      JSON.stringify(normalizedUser)
+      JSON.stringify(userData)
     );
 
     localStorage.setItem("token", token);
 
     set({
-      user: normalizedUser,
+      user: userData,
       token,
     });
 
     console.log("USER SAVED");
-  },
-
-  // ======================
-  // FETCH PROFILE
-  // ======================
-  fetchProfile: async () => {
-    try {
-
-      const { user, token } = get();
-
-      if (!user?.id || !token) {
-        return;
-      }
-
-      // 🔥 get profile directly
-      const res = await api.get(
-        `/profiles?filters[users_permissions_user][id][$eq]=${user.id}&populate=*`
-      );
-
-      const profile = res.data?.data?.[0];
-
-      if (!profile) {
-        console.log("NO PROFILE FOUND");
-        return;
-      }
-
-      // 🔥 avatar
-      let avatar = user.avatar || null;
-
-      if (profile?.avatar?.url) {
-        avatar = profile.avatar.url.startsWith("http")
-          ? profile.avatar.url
-          : `${BASE_URL}${profile.avatar.url}`;
-      }
-
-      // 🔥 merge
-      const mergedUser = {
-        ...user,
-
-        firstName: profile.firstName || "",
-        lastName: profile.lastName || "",
-        phone: profile.phone || "",
-        address: profile.address || "",
-
-        avatar,
-      };
-
-      localStorage.setItem(
-        "user",
-        JSON.stringify(mergedUser)
-      );
-
-      set({
-        user: mergedUser,
-      });
-
-      console.log("PROFILE FETCHED SUCCESS");
-
-    } catch (err) {
-      console.log("FETCH PROFILE ERROR:", err);
-    }
   },
 
   // ======================
@@ -229,23 +231,13 @@ export const useAuthStore = create((set, get) => ({
 
       if (storedUser && storedToken) {
 
-        let parsedUser = JSON.parse(storedUser);
-
-        // 🔥 normalize avatar again
-        if (
-          parsedUser?.avatar &&
-          !parsedUser.avatar.startsWith("http")
-        ) {
-          parsedUser.avatar = `${BASE_URL}${parsedUser.avatar}`;
-        }
-
         set({
-          user: parsedUser,
+          user: JSON.parse(storedUser),
           token: storedToken,
           hydrated: true,
         });
 
-        console.log("USER LOADED FROM STORAGE");
+        console.log("USER LOADED");
 
       } else {
 
@@ -264,13 +256,24 @@ export const useAuthStore = create((set, get) => ({
         token: null,
         hydrated: true,
       });
+
     }
   },
 
   // ======================
   // LOGOUT
   // ======================
-  logout: () => {
+  logout: async () => {
+
+    try {
+
+      await signOut(auth);
+
+    } catch (err) {
+
+      console.log("FIREBASE LOGOUT ERROR:", err);
+
+    }
 
     localStorage.removeItem("user");
     localStorage.removeItem("token");
