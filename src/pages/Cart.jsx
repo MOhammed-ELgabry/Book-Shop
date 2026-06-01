@@ -1,1068 +1,4 @@
 
-// // import { useEffect, useState } from "react";
-// // import { useCartStore, initCart } from "../store/CartStore";
-// // import { useAuthStore } from "../store/auth";
-// // import NavBar from "../component/NavBar";
-// // import Footer from "../component/Footer";
-// // import bgImage from "../assets/images/533643aa8db82414f48d43a992d009dda3961386.png";
-// // import Swal from "sweetalert2";
-// // import { Formik, Form, Field } from "formik";
-// // import * as Yup from "yup";
-// // import "animate.css";
-// // import CartPageSkeleton from "../component/skeletons/cart/CartPageSkeleton";
-
-// // // 🔥 الجديد
-// // import api from "../api/api";
-
-// // export default function Cart() {
-// //   const { cart, removeFromCart, updateQuantity, clearCart } = useCartStore();
-// //   const user = useAuthStore((state) => state.user);
-
-// //   const [openModal, setOpenModal] = useState(false);
-// //   const [selectedMethod, setSelectedMethod] = useState("");
-// //   const [showVisa, setShowVisa] = useState(false);
-// //   const [loading, setLoading] = useState(false);
-// //   const [orders, setOrders] = useState([]);
-
-// //   useEffect(() => {
-// //     if (user) {
-// //       initCart(user);
-// //       fetchOrders();
-// //     }
-// //   }, [user]);
-
-// //   // 🔥 بدل fetch → api
-// //   const fetchOrders = async () => {
-// //     try {
-// //       const res = await api.get("/orders?populate=*");
-// //       setOrders(res.data.data || []);
-// //     } catch (err) {
-// //       console.log(err);
-// //     }
-// //   };
-
-// //   const subtotal = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
-// //   const shipping = cart.length > 0 ? 10 : 0;
-// //   const total = subtotal + shipping;
-
-// //   // 🔥 هنا بقى هنعمل order حقيقي
-// //   const handleCashOrCOD = async (method, data) => {
-// //     setLoading(true);
-// //     try {
-// //       // 🧠 حفظ الأوردر في Strapi
-// //       await api.post("/orders", {
-// //         data: {
-// //           items: cart,
-// //           total: total,
-// //           paymentMethod: method,
-// //           user: user?.id,
-// //         },
-// //       });
-
-// //       Swal.fire({
-// //         icon: "success",
-// //         title: "Order placed successfully",
-// //         timer: 1500,
-// //         showConfirmButton: false,
-// //       });
-
-// //       clearCart();
-// //       setOpenModal(false);
-// //       setShowVisa(false);
-// //       setSelectedMethod("");
-// //       fetchOrders();
-// //     } catch (err) {
-// //       Swal.fire("Error", "Payment failed", "error");
-// //     } finally {
-// //       setLoading(false);
-// //     }
-// //   };
-
-// //   if (loading) return <CartPageSkeleton />;
-
-// //   return (
-// //     <div className="bg-gray-50 min-h-[100vh] overflow-x-hidden">
-// //       <NavBar />
-
-// //       <div
-// //         className="w-full h-48 bg-cover bg-center"
-// //         style={{ backgroundImage: `url(${bgImage})` }}
-// //       ></div>
-
-// //       <div className="max-w-7xl mx-auto px-6 py-10">
-// //         <h1 className="text-3xl font-bold mb-8">Shopping Cart</h1>
-
-// //         {cart.length === 0 ? (
-// //           <div className="text-center text-gray-500">
-// //             Your cart is empty 😢
-// //           </div>
-// //         ) : (
-// //           <div className="grid lg:grid-cols-3 gap-8">
-
-// //             {/* PRODUCTS */}
-// //             <div className="lg:col-span-2 flex flex-col gap-6">
-// //               {cart.map((item) => (
-// //                 <div
-// //                   key={item.id}
-// //                   className="bg-white p-4 rounded-xl shadow flex gap-4 items-center"
-// //                 >
-// //                   <img
-// //                     src={item.img}
-// //                     alt={item.name}
-// //                     className="w-24 h-32 object-cover rounded-lg"
-// //                   />
-
-// //                   <div className="flex-1">
-// //                     <h2 className="text-lg font-semibold">{item.name}</h2>
-// //                     <p className="text-gray-500">${item.price}</p>
-
-// //                     <div className="flex items-center gap-3 mt-3">
-// //                       <button
-// //                         onClick={() => updateQuantity(item.id, item.quantity - 1)}
-// //                         disabled={item.quantity <= 1}
-// //                         className="w-8 h-8 bg-gray-200 rounded"
-// //                       >
-// //                         -
-// //                       </button>
-// //                       <span>{item.quantity}</span>
-// //                       <button
-// //                         onClick={() => updateQuantity(item.id, item.quantity + 1)}
-// //                         className="w-8 h-8 bg-gray-200 rounded"
-// //                       >
-// //                         +
-// //                       </button>
-// //                     </div>
-// //                   </div>
-
-// //                   <div className="text-right">
-// //                     <p className="font-bold text-lg">
-// //                       ${item.price * item.quantity}
-// //                     </p>
-// //                     <button
-// //                       onClick={() => removeFromCart(item.id)}
-// //                       className="text-red-500 text-sm mt-2"
-// //                     >
-// //                       Remove
-// //                     </button>
-// //                   </div>
-// //                 </div>
-// //               ))}
-// //             </div>
-
-// //             {/* SUMMARY */}
-// //             <div className="bg-white p-6 rounded-xl shadow h-fit">
-// //               <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
-
-// //               <div className="flex justify-between mb-2">
-// //                 <span>Subtotal</span>
-// //                 <span>${subtotal}</span>
-// //               </div>
-
-// //               <div className="flex justify-between mb-2">
-// //                 <span>Shipping</span>
-// //                 <span>${shipping}</span>
-// //               </div>
-
-// //               <div className="border-t my-4"></div>
-
-// //               <div className="flex justify-between font-bold text-lg">
-// //                 <span>Total</span>
-// //                 <span className="text-pink-600">${total}</span>
-// //               </div>
-
-// //               <button
-// //                 onClick={() => setOpenModal(true)}
-// //                 className="w-full mt-6 bg-pink-600 text-white py-3 rounded-xl"
-// //               >
-// //                 Checkout
-// //               </button>
-// //             </div>
-// //           </div>
-// //         )}
-
-// //         {/* ORDERS */}
-// //         {orders.length > 0 && (
-// //           <div className="mt-10">
-// //             <h2 className="text-2xl font-bold mb-4">Order History</h2>
-// //             {orders.map((o, i) => (
-// //               <div
-// //                 key={i}
-// //                 className="p-4 bg-white rounded-xl shadow flex justify-between"
-// //               >
-// //                 <span>Order #{i + 1}</span>
-// //                 <span>${o.attributes?.total || 0}</span>
-// //               </div>
-// //             ))}
-// //           </div>
-// //         )}
-// //       </div>
-
-// //       <Footer />
-// //     </div>
-// //   );
-// // }
-
-// ما قبل اخر تعديل 
-
-// import { useEffect, useState } from "react";
-// import { useCartStore } from "../store/CartStore";
-// import { useAuthStore } from "../store/auth";
-// import NavBar from "../component/NavBar";
-// import Footer from "../component/Footer";
-// import bgImage from "../assets/images/533643aa8db82414f48d43a992d009dda3961386.png";
-// import Swal from "sweetalert2";
-// import CartPageSkeleton from "../component/skeletons/cart/CartPageSkeleton";
-
-// export default function Cart() {
-//   const {
-//     cart,
-//     initCart,
-//     removeFromCart,
-//     updateQuantity,
-//     clearCart,
-//     loading,
-//   } = useCartStore();
-
-//   const user = useAuthStore((state) => state.user);
-
-//   const [checkoutLoading, setCheckoutLoading] =
-//     useState(false);
-
-//   // =========================
-//   // LOAD CART
-//   // =========================
-//   useEffect(() => {
-//     if (user?.id) {
-//       initCart(user);
-//     }
-//   }, [user]);
-
-//   // =========================
-//   // CALCULATIONS
-//   // =========================
-//   const subtotal = cart.reduce(
-//     (acc, item) =>
-//       acc +
-//       Number(item.price) *
-//         Number(item.quantity),
-//     0
-//   );
-
-//   const shipping = cart.length > 0 ? 10 : 0;
-
-//   const total = subtotal + shipping;
-
-//   // =========================
-//   // CHECKOUT
-//   // =========================
-//   const handleCheckout = async () => {
-//     if (!user?.id) {
-//       Swal.fire({
-//         icon: "error",
-//         title: "Please login first",
-//       });
-
-//       return;
-//     }
-
-//     setCheckoutLoading(true);
-
-//     try {
-//       await clearCart(user);
-
-//       Swal.fire({
-//         icon: "success",
-//         title: "Order placed successfully",
-//         timer: 1500,
-//         showConfirmButton: false,
-//       });
-//     } catch (err) {
-//       console.log(err);
-
-//       Swal.fire({
-//         icon: "error",
-//         title: "Checkout failed",
-//       });
-//     } finally {
-//       setCheckoutLoading(false);
-//     }
-//   };
-
-//   // =========================
-//   // REMOVE ITEM
-//   // =========================
-//   const handleRemove = async (
-//     bookDocumentId
-//   ) => {
-//     await removeFromCart(
-//       bookDocumentId,
-//       user
-//     );
-
-//     Swal.fire({
-//       icon: "success",
-//       title: "Removed from cart",
-//       timer: 1200,
-//       showConfirmButton: false,
-//     });
-//   };
-
-//   // =========================
-//   // LOADING
-//   // =========================
-//   if (loading) return <CartPageSkeleton />;
-
-//   return (
-//     <div className="bg-gray-50 min-h-screen overflow-x-hidden">
-//       <NavBar />
-
-//       {/* HERO */}
-//       <div
-//         className="w-full h-48 bg-cover bg-center"
-//         style={{
-//           backgroundImage: `url(${bgImage})`,
-//         }}
-//       />
-
-//       <div className="max-w-7xl mx-auto px-6 py-10">
-//         <h1 className="text-3xl font-bold mb-8">
-//           Shopping Cart
-//         </h1>
-
-//         {/* EMPTY STATE */}
-//         {cart.length === 0 ? (
-//           <div className="bg-white rounded-xl shadow p-10 text-center">
-//             <h2 className="text-2xl font-semibold text-gray-700">
-//               Your cart is empty 😢
-//             </h2>
-
-//             <p className="text-gray-500 mt-2">
-//               Add some books and come back here
-//             </p>
-//           </div>
-//         ) : (
-//           <div className="grid lg:grid-cols-3 gap-8">
-//             {/* ITEMS */}
-//             <div className="lg:col-span-2 flex flex-col gap-6">
-//               {cart.map((item, index) => (
-//                 <div
-//                   key={index}
-//                   className="bg-white p-4 rounded-xl shadow flex gap-4 items-center"
-//                 >
-//                   {/* IMAGE */}
-//                   {item.img ? (
-//                     <img
-//                       src={item.img}
-//                       alt={item.name}
-//                       className="w-24 h-32 object-cover rounded-lg"
-//                     />
-//                   ) : (
-//                     <div className="w-24 h-32 bg-gray-200 rounded-lg flex items-center justify-center text-xs text-gray-500">
-//                       No Image
-//                     </div>
-//                   )}
-
-//                   <div className="flex-1">
-//                     <h2 className="text-lg font-semibold">
-//                       {item.name}
-//                     </h2>
-
-//                     <p className="text-gray-500">
-//                       ${item.price}
-//                     </p>
-
-//                     {/* QUANTITY */}
-//                     <div className="flex items-center gap-3 mt-3">
-//                       <button
-//                         onClick={() =>
-//                           updateQuantity(
-//                             item.documentId,
-//                             item.quantity - 1,
-//                             user
-//                           )
-//                         }
-//                         disabled={
-//                           item.quantity <= 1
-//                         }
-//                         className="w-8 h-8 bg-gray-200 rounded hover:bg-gray-300 transition"
-//                       >
-//                         -
-//                       </button>
-
-//                       <span className="font-medium">
-//                         {item.quantity}
-//                       </span>
-
-//                       <button
-//                         onClick={() =>
-//                           updateQuantity(
-//                             item.documentId,
-//                             item.quantity + 1,
-//                             user
-//                           )
-//                         }
-//                         className="w-8 h-8 bg-gray-200 rounded hover:bg-gray-300 transition"
-//                       >
-//                         +
-//                       </button>
-//                     </div>
-//                   </div>
-
-//                   {/* PRICE + REMOVE */}
-//                   <div className="text-right">
-//                     <p className="font-bold text-lg">
-//                       $
-//                       {Number(item.price) *
-//                         Number(
-//                           item.quantity
-//                         )}
-//                     </p>
-
-//                     <button
-//                       onClick={() =>
-//                         handleRemove(
-//                           item.documentId
-//                         )
-//                       }
-//                       className="text-red-500 text-sm mt-2 hover:text-red-700"
-//                     >
-//                       Remove
-//                     </button>
-//                   </div>
-//                 </div>
-//               ))}
-//             </div>
-
-//             {/* SUMMARY */}
-//             <div className="bg-white p-6 rounded-xl shadow h-fit">
-//               <h2 className="text-xl font-semibold mb-4">
-//                 Order Summary
-//               </h2>
-
-//               <div className="flex justify-between mb-2">
-//                 <span>Subtotal</span>
-
-//                 <span>${subtotal}</span>
-//               </div>
-
-//               <div className="flex justify-between mb-2">
-//                 <span>Shipping</span>
-
-//                 <span>${shipping}</span>
-//               </div>
-
-//               <div className="border-t my-4" />
-
-//               <div className="flex justify-between font-bold text-lg">
-//                 <span>Total</span>
-
-//                 <span className="text-pink-600">
-//                   ${total}
-//                 </span>
-//               </div>
-
-//               <button
-//                 onClick={handleCheckout}
-//                 disabled={checkoutLoading}
-//                 className="w-full mt-6 bg-pink-600 hover:bg-pink-700 transition text-white py-3 rounded-xl disabled:opacity-50"
-//               >
-//                 {checkoutLoading
-//                   ? "Processing..."
-//                   : "Checkout"}
-//               </button>
-//             </div>
-//           </div>
-//         )}
-//       </div>
-
-//       <Footer />
-//     </div>
-//   );
-// }
-
-// import { useEffect, useState } from "react";
-// import { useCartStore } from "../store/CartStore";
-// import { useAuthStore } from "../store/auth";
-// import NavBar from "../component/NavBar";
-// import Footer from "../component/Footer";
-// import bgImage from "../assets/images/533643aa8db82414f48d43a992d009dda3961386.png";
-// import Swal from "sweetalert2";
-// import CartPageSkeleton from "../component/skeletons/cart/CartPageSkeleton";
-
-// export default function Cart() {
-//   const {
-//     cart,
-//     initCart,
-//     removeFromCart,
-//     updateQuantity,
-//     clearCart,
-//     loading,
-//   } = useCartStore();
-
-//   const user = useAuthStore((state) => state.user);
-
-//   const [checkoutLoading, setCheckoutLoading] =
-//     useState(false);
-
-//   // =========================
-//   // LOAD CART
-//   // =========================
-//   useEffect(() => {
-//     if (user?.id) {
-//       initCart(user);
-//     }
-//   }, [user]);
-
-//   // =========================
-//   // CALCULATIONS
-//   // =========================
-//   const subtotal = cart.reduce(
-//     (acc, item) =>
-//       acc +
-//       Number(item.price) *
-//         Number(item.quantity),
-//     0
-//   );
-
-//   const shipping = cart.length > 0 ? 10 : 0;
-
-//   const total = subtotal + shipping;
-
-//   // =========================
-//   // CHECKOUT
-//   // =========================
-//   const handleCheckout = async () => {
-//     if (!user?.id) {
-//       Swal.fire({
-//         icon: "error",
-//         title: "Please login first",
-//       });
-
-//       return;
-//     }
-
-//     setCheckoutLoading(true);
-
-//     try {
-//       await clearCart(user);
-
-//       Swal.fire({
-//         icon: "success",
-//         title: "Order placed successfully",
-//         timer: 1500,
-//         showConfirmButton: false,
-//       });
-//     } catch (err) {
-//       console.log(err);
-
-//       Swal.fire({
-//         icon: "error",
-//         title: "Checkout failed",
-//       });
-//     } finally {
-//       setCheckoutLoading(false);
-//     }
-//   };
-
-//   // =========================
-//   // REMOVE ITEM
-//   // =========================
-//   const handleRemove = async (
-//     bookId
-//   ) => {
-//     await removeFromCart(
-//       bookId,
-//       user
-//     );
-
-//     Swal.fire({
-//       icon: "success",
-//       title: "Removed from cart",
-//       timer: 1200,
-//       showConfirmButton: false,
-//     });
-//   };
-
-//   // =========================
-//   // LOADING
-//   // =========================
-//   if (loading) return <CartPageSkeleton />;
-
-//   return (
-//     <div className="bg-gray-50 min-h-screen overflow-x-hidden">
-//       <NavBar />
-
-//       {/* HERO */}
-//       <div
-//         className="w-full h-48 bg-cover bg-center"
-//         style={{
-//           backgroundImage: `url(${bgImage})`,
-//         }}
-//       />
-
-//       <div className="max-w-7xl mx-auto px-6 py-10">
-//         <h1 className="text-3xl font-bold mb-8">
-//           Shopping Cart
-//         </h1>
-
-//         {/* EMPTY STATE */}
-//         {cart.length === 0 ? (
-//           <div className="bg-white rounded-xl shadow p-10 text-center">
-//             <h2 className="text-2xl font-semibold text-gray-700">
-//               Your cart is empty 😢
-//             </h2>
-
-//             <p className="text-gray-500 mt-2">
-//               Add some books and come back here
-//             </p>
-//           </div>
-//         ) : (
-//           <div className="grid lg:grid-cols-3 gap-8">
-//             {/* ITEMS */}
-//             <div className="lg:col-span-2 flex flex-col gap-6">
-//               {cart.map((item, index) => (
-//                 <div
-//                   key={index}
-//                   className="bg-white p-4 rounded-xl shadow flex gap-4 items-center"
-//                 >
-//                   {/* IMAGE */}
-//                   {item.img ? (
-//                     <img
-//                       src={item.img}
-//                       alt={item.name}
-//                       className="w-24 h-32 object-cover rounded-lg"
-//                     />
-//                   ) : (
-//                     <div className="w-24 h-32 bg-gray-200 rounded-lg flex items-center justify-center text-xs text-gray-500">
-//                       No Image
-//                     </div>
-//                   )}
-
-//                   <div className="flex-1">
-//                     <h2 className="text-lg font-semibold">
-//                       {item.name}
-//                     </h2>
-
-//                     <p className="text-sm text-gray-500 mb-1">
-//                       {item.author}
-//                     </p>
-
-//                     <p className="text-gray-500">
-//                       ${item.price}
-//                     </p>
-
-//                     {/* QUANTITY */}
-//                     <div className="flex items-center gap-3 mt-3">
-//                       <button
-//                         onClick={() =>
-//                           updateQuantity(
-//                             item.bookId,
-//                             item.quantity - 1,
-//                             user
-//                           )
-//                         }
-//                         disabled={
-//                           item.quantity <= 1
-//                         }
-//                         className="w-8 h-8 bg-gray-200 rounded hover:bg-gray-300 transition"
-//                       >
-//                         -
-//                       </button>
-
-//                       <span className="font-medium">
-//                         {item.quantity}
-//                       </span>
-
-//                       <button
-//                         onClick={() =>
-//                           updateQuantity(
-//                             item.bookId,
-//                             item.quantity + 1,
-//                             user
-//                           )
-//                         }
-//                         className="w-8 h-8 bg-gray-200 rounded hover:bg-gray-300 transition"
-//                       >
-//                         +
-//                       </button>
-//                     </div>
-//                   </div>
-
-//                   {/* PRICE + REMOVE */}
-//                   <div className="text-right">
-//                     <p className="font-bold text-lg">
-//                       $
-//                       {Number(item.price) *
-//                         Number(
-//                           item.quantity
-//                         )}
-//                     </p>
-
-//                     <button
-//                       onClick={() =>
-//                         handleRemove(
-//                           item.bookId
-//                         )
-//                       }
-//                       className="text-red-500 text-sm mt-2 hover:text-red-700"
-//                     >
-//                       Remove
-//                     </button>
-//                   </div>
-//                 </div>
-//               ))}
-//             </div>
-
-//             {/* SUMMARY */}
-//             <div className="bg-white p-6 rounded-xl shadow h-fit">
-//               <h2 className="text-xl font-semibold mb-4">
-//                 Order Summary
-//               </h2>
-
-//               <div className="flex justify-between mb-2">
-//                 <span>Subtotal</span>
-
-//                 <span>${subtotal}</span>
-//               </div>
-
-//               <div className="flex justify-between mb-2">
-//                 <span>Shipping</span>
-
-//                 <span>${shipping}</span>
-//               </div>
-
-//               <div className="border-t my-4" />
-
-//               <div className="flex justify-between font-bold text-lg">
-//                 <span>Total</span>
-
-//                 <span className="text-pink-600">
-//                   ${total}
-//                 </span>
-//               </div>
-
-//               <button
-//                 onClick={handleCheckout}
-//                 disabled={checkoutLoading}
-//                 className="w-full mt-6 bg-pink-600 hover:bg-pink-700 transition text-white py-3 rounded-xl disabled:opacity-50"
-//               >
-//                 {checkoutLoading
-//                   ? "Processing..."
-//                   : "Checkout"}
-//               </button>
-//             </div>
-//           </div>
-//         )}
-//       </div>
-
-//       <Footer />
-//     </div>
-//   );
-// }
-//deepseek
-
-
-
-
-// import { useEffect, useState } from "react";
-// import { useCartStore } from "../store/CartStore";
-// import { useAuthStore } from "../store/auth";
-// import NavBar from "../component/NavBar";
-// import Footer from "../component/Footer";
-// import bgImage from "../assets/images/533643aa8db82414f48d43a992d009dda3961386.png";
-// import Swal from "sweetalert2";
-// import CartPageSkeleton from "../component/skeletons/cart/CartPageSkeleton";
-
-// export default function Cart() {
-
-//   const {
-//     cart,
-//     initCart,
-//     removeFromCart,
-//     updateQuantity,
-//     clearCart,
-//     loading,
-//   } = useCartStore();
-
-//   const user = useAuthStore((state) => state.user);
-
-//   const [checkoutLoading, setCheckoutLoading] =
-//     useState(false);
-
-//   // ======================
-//   // INIT CART
-//   // ======================
-//   useEffect(() => {
-
-//     if (user?.id) {
-//       initCart();
-//     }
-
-//   }, [user?.id]);
-
-//   // ======================
-//   // TOTALS
-//   // ======================
-//   const subtotal = cart.reduce(
-//     (acc, item) =>
-//       acc +
-//       Number(item.price) *
-//         Number(item.quantity),
-//     0
-//   );
-
-//   const shipping =
-//     cart.length > 0 ? 10 : 0;
-
-//   const total = subtotal + shipping;
-
-//   // ======================
-//   // CHECKOUT
-//   // ======================
-//   const handleCheckout = async () => {
-
-//     if (!user?.id) {
-
-//       Swal.fire({
-//         icon: "error",
-//         title: "Please login first",
-//       });
-
-//       return;
-//     }
-
-//     setCheckoutLoading(true);
-
-//     try {
-
-//       await clearCart();
-
-//       Swal.fire({
-//         icon: "success",
-//         title: "Order placed successfully",
-//         timer: 1500,
-//         showConfirmButton: false,
-//       });
-
-//     } catch (err) {
-
-//       console.log(err);
-
-//       Swal.fire({
-//         icon: "error",
-//         title: "Checkout failed",
-//       });
-
-//     } finally {
-
-//       setCheckoutLoading(false);
-
-//     }
-//   };
-
-//   // ======================
-//   // REMOVE
-//   // ======================
-//   const handleRemove = async (bookId) => {
-
-//     await removeFromCart(bookId);
-
-//     Swal.fire({
-//       icon: "success",
-//       title: "Removed from cart",
-//       timer: 1200,
-//       showConfirmButton: false,
-//     });
-//   };
-
-//   if (loading) return <CartPageSkeleton />;
-
-//   return (
-//     <div className="bg-gray-50 min-h-screen overflow-x-hidden">
-
-//       <NavBar />
-
-//       {/* HERO */}
-//       <div
-//         className="w-full h-48 bg-cover bg-center"
-//         style={{
-//           backgroundImage: `url(${bgImage})`,
-//         }}
-//       />
-
-//       {/* CONTENT */}
-//       <div className="max-w-7xl mx-auto px-6 py-10">
-
-//         <h1 className="text-3xl font-bold mb-8">
-//           Shopping Cart
-//         </h1>
-
-//         {cart.length === 0 ? (
-
-//           <div className="bg-white rounded-xl shadow p-10 text-center">
-
-//             <h2 className="text-2xl font-semibold text-gray-700">
-//               Your cart is empty 😢
-//             </h2>
-
-//             <p className="text-gray-500 mt-2">
-//               Add some books and come back here
-//             </p>
-
-//           </div>
-
-//         ) : (
-
-//           <div className="grid lg:grid-cols-3 gap-8">
-
-//             {/* CART ITEMS */}
-//             <div className="lg:col-span-2 flex flex-col gap-6">
-
-//               {cart.map((item) => (
-
-//                 <div
-//                   key={item.id}
-//                   className="bg-white p-4 rounded-xl shadow flex gap-4 items-center"
-//                 >
-
-//                   {/* IMAGE */}
-//                   {item.img ? (
-
-//                     <img
-//                       src={item.img}
-//                       alt={item.name}
-//                       className="w-24 h-32 object-cover rounded-lg"
-//                     />
-
-//                   ) : (
-
-//                     <div className="w-24 h-32 bg-gray-200 rounded-lg flex items-center justify-center text-xs text-gray-500">
-//                       No Image
-//                     </div>
-
-//                   )}
-
-//                   {/* INFO */}
-//                   <div className="flex-1">
-
-//                     <h2 className="text-lg font-semibold">
-//                       {item.name}
-//                     </h2>
-
-//                     <p className="text-sm text-gray-500 mb-1">
-//                       {item.author}
-//                     </p>
-
-//                     <p className="text-gray-500">
-//                       ${item.price}
-//                     </p>
-
-//                     {/* QUANTITY */}
-//                     <div className="flex items-center gap-3 mt-3">
-
-//                       <button
-//                         onClick={() =>
-//                           updateQuantity(
-//                             item.bookId,
-//                             item.quantity - 1
-//                           )
-//                         }
-//                         disabled={item.quantity <= 1}
-//                         className="w-8 h-8 bg-gray-200 rounded hover:bg-gray-300 transition"
-//                       >
-//                         -
-//                       </button>
-
-//                       <span className="font-medium">
-//                         {item.quantity}
-//                       </span>
-
-//                       <button
-//                         onClick={() =>
-//                           updateQuantity(
-//                             item.bookId,
-//                             item.quantity + 1
-//                           )
-//                         }
-//                         className="w-8 h-8 bg-gray-200 rounded hover:bg-gray-300 transition"
-//                       >
-//                         +
-//                       </button>
-
-//                     </div>
-//                   </div>
-
-//                   {/* PRICE */}
-//                   <div className="text-right">
-
-//                     <p className="font-bold text-lg">
-//                       $
-//                       {Number(item.price) *
-//                         Number(item.quantity)}
-//                     </p>
-
-//                     <button
-//                       onClick={() =>
-//                         handleRemove(item.bookId)
-//                       }
-//                       className="text-red-500 text-sm mt-2 hover:text-red-700"
-//                     >
-//                       Remove
-//                     </button>
-
-//                   </div>
-//                 </div>
-//               ))}
-//             </div>
-
-//             {/* SUMMARY */}
-//             <div className="bg-white p-6 rounded-xl shadow h-fit">
-
-//               <h2 className="text-xl font-semibold mb-4">
-//                 Order Summary
-//               </h2>
-
-//               <div className="flex justify-between mb-2">
-//                 <span>Subtotal</span>
-//                 <span>${subtotal}</span>
-//               </div>
-
-//               <div className="flex justify-between mb-2">
-//                 <span>Shipping</span>
-//                 <span>${shipping}</span>
-//               </div>
-
-//               <div className="border-t my-4" />
-
-//               <div className="flex justify-between font-bold text-lg">
-
-//                 <span>Total</span>
-
-//                 <span className="text-pink-600">
-//                   ${total}
-//                 </span>
-
-//               </div>
-
-//               <button
-//                 onClick={handleCheckout}
-//                 disabled={checkoutLoading}
-//                 className="w-full mt-6 bg-pink-600 hover:bg-pink-700 transition text-white py-3 rounded-xl disabled:opacity-50"
-//               >
-//                 {checkoutLoading
-//                   ? "Processing..."
-//                   : "Checkout"}
-//               </button>
-
-//             </div>
-//           </div>
-//         )}
-//       </div>
-
-//       <Footer />
-//     </div>
-//   );
-// }
 import { useEffect, useState } from "react";
 import { useCartStore } from "../store/CartStore";
 import { useAuthStore } from "../store/auth";
@@ -1071,6 +7,7 @@ import Footer from "../component/Footer";
 import bgImage from "../assets/images/533643aa8db82414f48d43a992d009dda3961386.png";
 import Swal from "sweetalert2";
 import CartPageSkeleton from "../component/skeletons/cart/CartPageSkeleton";
+import api from "../api/api";
 
 const BASE_URL = "http://localhost:1337";
 
@@ -1085,15 +22,99 @@ export default function Cart() {
   } = useCartStore();
 
   const user = useAuthStore((s) => s.user);
-  const [checkoutLoading, setCheckoutLoading] = useState(false);
+
+  const [checkoutLoading, setCheckoutLoading] =
+    useState(false);
+
+  // ======================
+  // CHECKOUT MODAL
+  // ======================
+  const [showCheckoutModal, setShowCheckoutModal] =
+    useState(false);
+
+  // ======================
+  // ORDERS MODAL
+  // ======================
+  const [showOrdersModal, setShowOrdersModal] =
+    useState(false);
+
+  // ======================
+  // ORDERS
+  // ======================
+  const [orders, setOrders] = useState([]);
+
+  const [ordersLoading, setOrdersLoading] =
+    useState(false);
+
+  const [paymentMethod, setPaymentMethod] =
+    useState("");
+
+  // ======================
+  // FORM DATA
+  // ======================
+  const [checkoutData, setCheckoutData] =
+    useState({
+      address: "",
+      phone: "",
+      walletType: "",
+      cardName: "",
+      cardNumber: "",
+      expiry: "",
+      cvv: "",
+    });
 
   // ======================
   // INIT CART
   // ======================
-  useEffect(() => {
+
+
+  // ======================
+// INIT CART + FETCH ORDERS
+// ======================
+useEffect(() => {
+  if (!user?.id) return;
+
+  const loadData = async () => {
+    await initCart(user);
+
+    // 🔥 IMPORTANT
+    // LOAD ORDERS AFTER REFRESH
+    await fetchOrders();
+  };
+
+  loadData();
+}, [user?.id]);
+  // ======================
+  // GET ORDERS
+  // ======================
+  const fetchOrders = async () => {
     if (!user?.id) return;
-    initCart(user);
-  }, [user?.id]);
+
+    setOrdersLoading(true);
+
+    try {
+      const res = await api.get(
+        // `/orders?filters[users_permissions_user][id][$eq]=${user.id}&populate[items][populate]=book`
+          `/orders?filters[users_permissions_user][id][$eq]=${user.id}&populate[items][populate]=book&populate=seller`
+      );
+
+      const ordersData =
+        res?.data?.data || [];
+
+      setOrders(ordersData);
+
+    } catch (err) {
+
+      Swal.fire({
+        icon: "error",
+        title: "Failed to load orders",
+      });
+
+    } finally {
+
+      setOrdersLoading(false);
+    }
+  };
 
   // ======================
   // SAFE TOTALS
@@ -1101,32 +122,200 @@ export default function Cart() {
   const subtotal = cart.reduce((acc, i) => {
     const price = Number(i.price) || 0;
     const qty = Number(i.quantity) || 0;
+
     return acc + price * qty;
   }, 0);
 
   const shipping = cart.length ? 10 : 0;
+
   const total = subtotal + shipping;
 
   // ======================
-  // CHECKOUT
+  // INPUT CHANGE
+  // ======================
+  const handleChange = (e) => {
+    setCheckoutData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  // ======================
+  // OPEN CHECKOUT
+  // ======================
+  const handleOpenCheckout = () => {
+    setShowCheckoutModal(true);
+  };
+
+  // ======================
+  // CLOSE CHECKOUT
+  // ======================
+  const handleCloseCheckout = () => {
+    setShowCheckoutModal(false);
+
+    setPaymentMethod("");
+  };
+
+  // ======================
+  // OPEN ORDERS
+  // ======================
+  const handleOpenOrders = async () => {
+    await fetchOrders();
+
+    setShowOrdersModal(true);
+  };
+
+  // ======================
+  // CLOSE ORDERS
+  // ======================
+  const handleCloseOrders = () => {
+    setShowOrdersModal(false);
+  };
+
+  // ======================
+  // CONFIRM ORDER
   // ======================
   const handleCheckout = async () => {
     if (!user?.id) return;
 
+    // ======================
+    // VALIDATION
+    // ======================
+    if (
+      !checkoutData.address ||
+      !checkoutData.phone
+    ) {
+      Swal.fire({
+        icon: "warning",
+        title: "Missing Data",
+        text: "Please fill address and phone",
+      });
+
+      return;
+    }
+
+    if (!paymentMethod) {
+      Swal.fire({
+        icon: "warning",
+        title: "Choose payment method",
+      });
+
+      return;
+    }
+
+    // ======================
+    // VISA VALIDATION
+    // ======================
+    if (paymentMethod === "visa") {
+      if (
+        !checkoutData.cardName ||
+        !checkoutData.cardNumber ||
+        !checkoutData.expiry ||
+        !checkoutData.cvv
+      ) {
+        Swal.fire({
+          icon: "warning",
+          title: "Complete Visa Data",
+        });
+
+        return;
+      }
+    }
+
+    // ======================
+    // WALLET VALIDATION
+    // ======================
+    if (paymentMethod === "wallet") {
+      if (!checkoutData.walletType) {
+        Swal.fire({
+          icon: "warning",
+          title: "Choose Wallet Type",
+        });
+
+        return;
+      }
+    }
+
     setCheckoutLoading(true);
 
     try {
+      // ======================
+      // ORDER ITEMS
+      // ======================
+      const orderItems = cart.map((item) => ({
+        quantity: item.quantity,
+        book: item.bookId,
+      }));
+
+      // ======================
+      // CREATE ORDER PAYLOAD
+      // ======================
+      const payload = {
+        data: {
+          users_permissions_user: user.id,
+
+          items: orderItems,
+
+          total: total,
+
+          address: checkoutData.address,
+
+          phone: checkoutData.phone,
+
+          paymentMethod: paymentMethod,
+
+          orderStatus: "pending",
+        },
+      };
+
+      
+      // ======================
+      // CREATE ORDER
+      // ======================
+      await api.post(
+        "/orders",
+        payload
+      );
+
+      // ======================
+      // CLEAR CART
+      // ======================
       await clearCart(user);
 
       Swal.fire({
         icon: "success",
-        title: "Order placed",
+        title:
+          "Order placed successfully 🎉",
         timer: 1500,
         showConfirmButton: false,
       });
+
+      // ======================
+      // RESET FORM
+      // ======================
+      setCheckoutData({
+        address: "",
+        phone: "",
+        walletType: "",
+        cardName: "",
+        cardNumber: "",
+        expiry: "",
+        cvv: "",
+      });
+
+      handleCloseCheckout();
+
+      await fetchOrders();
+
     } catch (err) {
-      Swal.fire({ icon: "error", title: "Failed" });
+
+      Swal.fire({
+        icon: "error",
+        title: "Failed to place order",
+      });
+
     } finally {
+
       setCheckoutLoading(false);
     }
   };
@@ -1139,11 +328,34 @@ export default function Cart() {
 
       <div
         className="w-full h-48 bg-cover bg-center"
-        style={{ backgroundImage: `url(${bgImage})` }}
+        style={{
+          backgroundImage: `url(${bgImage})`,
+        }}
       />
 
       <div className="max-w-7xl mx-auto px-6 py-10">
-        <h1 className="text-3xl font-bold mb-8">Shopping Cart</h1>
+
+        <div className="flex items-center justify-between mb-8">
+
+          <h1 className="text-3xl font-bold">
+            Shopping Cart
+          </h1>
+
+          {/* {orders.length > 0 && (
+            <button
+              onClick={handleOpenOrders}
+              className="bg-black text-white px-5 py-3 rounded-xl"
+            >
+              My Orders
+            </button>
+          )} */}
+   <button
+  onClick={handleOpenOrders}
+  className="bg-black text-white px-5 py-3 rounded-xl"
+>
+  My Orders
+</button>
+        </div>
 
         {cart.length === 0 ? (
           <div className="bg-white p-10 text-center rounded-xl">
@@ -1151,16 +363,19 @@ export default function Cart() {
           </div>
         ) : (
           <div className="grid lg:grid-cols-3 gap-8">
+
             {/* ======================
                 ITEMS
             ====================== */}
             <div className="lg:col-span-2 flex flex-col gap-6">
+
               {cart.map((item) => {
-                // 🔥 SAFE IMAGE RESOLUTION (IMPORTANT FIX)
+
                 const imgUrl =
                   item?.img ||
                   item?.book?.img?.url ||
-                  item?.book?.img?.data?.attributes?.url ||
+                  item?.book?.img?.data?.attributes
+                    ?.url ||
                   null;
 
                 const finalImg = imgUrl
@@ -1174,7 +389,8 @@ export default function Cart() {
                     key={item.bookId}
                     className="bg-white p-4 rounded-xl shadow flex gap-4"
                   >
-                    {/* IMAGE FIXED */}
+
+                    {/* IMAGE */}
                     {finalImg && (
                       <img
                         src={finalImg}
@@ -1183,14 +399,28 @@ export default function Cart() {
                       />
                     )}
 
+                    {/* CONTENT */}
                     <div className="flex-1">
-                      <h2>{item.name}</h2>
-                      <p>${item.price}</p>
 
-                      <div className="flex gap-2 mt-3">
+                      <h2 className="font-semibold text-lg">
+                        {item.name}
+                      </h2>
+
+                      <p className="text-gray-500 mt-1">
+                        ${item.price}
+                      </p>
+
+                      {/* QUANTITY */}
+                      <div className="flex gap-2 mt-4 items-center">
+
                         <button
+                          className="border px-3 py-1 rounded"
                           onClick={() => {
-                            if (item.quantity <= 1) return;
+
+                            if (
+                              item.quantity <= 1
+                            )
+                              return;
 
                             updateQuantity(
                               item.bookId,
@@ -1202,9 +432,12 @@ export default function Cart() {
                           -
                         </button>
 
-                        <span>{item.quantity}</span>
+                        <span>
+                          {item.quantity}
+                        </span>
 
                         <button
+                          className="border px-3 py-1 rounded"
                           onClick={() =>
                             updateQuantity(
                               item.bookId,
@@ -1218,9 +451,14 @@ export default function Cart() {
                       </div>
                     </div>
 
+                    {/* REMOVE */}
                     <button
+                      className="text-red-500"
                       onClick={() =>
-                        removeFromCart(item.bookId, user)
+                        removeFromCart(
+                          item.bookId,
+                          user
+                        )
                       }
                     >
                       Remove
@@ -1234,13 +472,21 @@ export default function Cart() {
                 SUMMARY
             ====================== */}
             <div className="bg-white p-6 rounded-xl h-fit">
-              <div>Subtotal: ${subtotal}</div>
-              <div>Shipping: ${shipping}</div>
-              <div>Total: ${total}</div>
+
+              <div className="mb-3">
+                Subtotal: ${subtotal}
+              </div>
+
+              <div className="mb-3">
+                Shipping: ${shipping}
+              </div>
+
+              <div className="font-bold text-lg">
+                Total: ${total}
+              </div>
 
               <button
-                onClick={handleCheckout}
-                disabled={checkoutLoading}
+                onClick={handleOpenCheckout}
                 className="w-full mt-4 bg-pink-600 text-white p-3 rounded"
               >
                 Checkout
@@ -1250,9 +496,910 @@ export default function Cart() {
         )}
       </div>
 
+      {/* {/* ======================
+          CHECKOUT MODAL
+      ====================== */}
+      {showCheckoutModal && (
+        <div
+          onClick={handleCloseCheckout}
+          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-4"
+        >
+
+          <div
+            onClick={(e) =>
+              e.stopPropagation()
+            }
+            className="bg-white w-full max-w-lg rounded-2xl p-6 max-h-[90vh] overflow-y-auto"
+          >
+
+            <h2 className="text-2xl font-bold mb-6">
+              Checkout
+            </h2>
+
+            {/* PAYMENT METHODS */}
+            <div className="flex flex-col gap-3 mb-6">
+
+              <button
+                onClick={() =>
+                  setPaymentMethod("visa")
+                }
+                className={`border p-3 rounded-lg text-left ${
+                  paymentMethod === "visa"
+                    ? "border-pink-600 bg-pink-50"
+                    : ""
+                }`}
+              >
+                💳 Visa / Mastercard
+              </button>
+
+              <button
+                onClick={() =>
+                  setPaymentMethod("wallet")
+                }
+                className={`border p-3 rounded-lg text-left ${
+                  paymentMethod === "wallet"
+                    ? "border-pink-600 bg-pink-50"
+                    : ""
+                }`}
+              >
+                📱 Mobile Wallet
+              </button>
+
+              <button
+                onClick={() =>
+                  setPaymentMethod("cash")
+                }
+                className={`border p-3 rounded-lg text-left ${
+                  paymentMethod === "cash"
+                    ? "border-pink-600 bg-pink-50"
+                    : ""
+                }`}
+              >
+                🚚 Cash On Delivery
+              </button>
+            </div>
+
+            {/* ADDRESS */}
+            <div className="flex flex-col gap-4 mb-6">
+
+              <input
+                type="text"
+                name="address"
+                value={checkoutData.address}
+                onChange={handleChange}
+                placeholder="Address"
+                className="border p-3 rounded-lg"
+              />
+
+              <input
+                type="text"
+                name="phone"
+                value={checkoutData.phone}
+                onChange={handleChange}
+                placeholder="Phone Number"
+                className="border p-3 rounded-lg"
+              />
+            </div>
+
+            {/* VISA FORM */}
+            {paymentMethod === "visa" && (
+              <div className="flex flex-col gap-4 mb-6">
+
+                <input
+                  type="text"
+                  name="cardName"
+                  value={
+                    checkoutData.cardName
+                  }
+                  onChange={handleChange}
+                  placeholder="Card Holder Name"
+                  className="border p-3 rounded-lg"
+                />
+
+                <input
+                  type="text"
+                  name="cardNumber"
+                  value={
+                    checkoutData.cardNumber
+                  }
+                  onChange={handleChange}
+                  placeholder="Card Number"
+                  className="border p-3 rounded-lg"
+                />
+
+                <div className="grid grid-cols-2 gap-4">
+
+                  <input
+                    type="text"
+                    name="expiry"
+                    value={
+                      checkoutData.expiry
+                    }
+                    onChange={handleChange}
+                    placeholder="MM/YY"
+                    className="border p-3 rounded-lg"
+                  />
+
+                  <input
+                    type="text"
+                    name="cvv"
+                    value={checkoutData.cvv}
+                    onChange={handleChange}
+                    placeholder="CVV"
+                    className="border p-3 rounded-lg"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* WALLET FORM */}
+            {paymentMethod === "wallet" && (
+              <div className="flex flex-col gap-4 mb-6">
+
+                <select
+                  name="walletType"
+                  value={
+                    checkoutData.walletType
+                  }
+                  onChange={handleChange}
+                  className="border p-3 rounded-lg"
+                >
+                  <option value="">
+                    Choose Wallet
+                  </option>
+
+                  <option value="vodafone">
+                    Vodafone Cash
+                  </option>
+
+                  <option value="orange">
+                    Orange Cash
+                  </option>
+
+                  <option value="etisalat">
+                    Etisalat Cash
+                  </option>
+
+                  <option value="we">
+                    WE Pay
+                  </option>
+                </select>
+
+                {checkoutData.walletType && (
+                  <div className="border rounded-xl p-4 bg-gray-50">
+
+                    <p className="text-sm text-gray-500 mb-2">
+                      Send payment to:
+                    </p>
+
+                    <p className="text-xl font-bold text-pink-600">
+                      {{
+                        vodafone: "01006164484",
+                        orange: "01111111111",
+                        etisalat: "01222222222",
+                        we: "01533333333",
+                      }[
+                        checkoutData.walletType
+                      ]}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* BUTTONS */}
+            <div className="flex gap-4">
+
+              <button
+                onClick={handleCloseCheckout}
+                className="flex-1 border p-3 rounded-lg"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={handleCheckout}
+                disabled={checkoutLoading}
+                className="flex-1 bg-pink-600 text-white p-3 rounded-lg"
+              >
+                {checkoutLoading
+                  ? "Processing..."
+                  : "Confirm Order"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ======================
+          ORDERS MODAL
+      ====================== */}
+      {showOrdersModal && (
+        <div
+          onClick={handleCloseOrders}
+          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-4"
+        >
+
+          <div
+            onClick={(e) =>
+              e.stopPropagation()
+            }
+            className="bg-white w-full max-w-3xl rounded-2xl p-6 max-h-[90vh] overflow-y-auto"
+          >
+
+            <h2 className="text-2xl font-bold mb-6">
+              My Orders
+            </h2>
+
+            {ordersLoading ? (
+
+              <div className="text-center py-10">
+                Loading...
+              </div>
+
+            ) : orders.length === 0 ? (
+
+              <div className="text-center py-10">
+                No orders found
+              </div>
+
+            ) : (
+
+              <div className="flex flex-col gap-6">
+
+                {orders.map((order) => {
+                   const sellerName =
+    order?.seller?.username ||
+    order?.seller?.name ||
+    order?.seller?.email ||
+    "Not assigned";
+                  const status =
+                    order?.orderStatus;
+
+                  return (
+                    <div
+                      key={order.id}
+                      className="border rounded-2xl p-5"
+                    >
+
+                      {/* HEADER */}
+                      <div className="flex items-center justify-between mb-4">
+
+                        <div>
+                          <h3 className="font-bold text-lg">
+                            Order #{order.id}
+                          </h3>
+
+                          <p className="text-sm text-gray-500">
+                            {new Date(
+                              order.createdAt
+                            ).toLocaleDateString()}
+                          </p>
+                        </div>
+
+                       
+                        <div className="flex flex-wrap gap-2">
+
+  {/* ORDER STATUS */}
+  
+  <div
+    className={`px-4 py-2 rounded-full text-sm font-semibold capitalize ${
+      status === "pending"
+        ? "bg-yellow-100 text-yellow-700"
+        : status === "accepted"
+        ? "bg-green-100 text-green-700"
+        : status === "rejected"
+        ? "bg-red-100 text-red-700"
+        : "bg-blue-100 text-blue-700"
+    }`}
+  >
+    Order: {status}
+  </div>
+
+  {/* PAYMENT STATUS */}
+  <div
+    className={`px-4 py-2 rounded-full text-sm font-semibold capitalize ${
+      order?.paymentStatus === "paid"
+        ? "bg-green-100 text-green-700"
+        : order?.paymentStatus === "failed"
+        ? "bg-red-100 text-red-700"
+        : "bg-yellow-100 text-yellow-700"
+    }`}
+  >
+    Payment: {order?.paymentStatus || "pending"}
+  </div>
+
+</div>
+                      </div>
+
+                      {/* INFO */}
+                      <div className="grid md:grid-cols-2 gap-4 mb-4">
+
+                        <div className="bg-gray-50 p-4 rounded-xl">
+                          <p className="text-sm text-gray-500">
+                            Payment Method
+                          </p>
+
+                          <p className="font-semibold capitalize">
+                            {order.paymentMethod}
+                          </p>
+                        </div>
+                                  <div className="mb-3 bg-blue-50 p-3 rounded-xl">
+  <p className="text-sm text-gray-500">Seller</p>
+  <p className="font-semibold text-blue-700">
+    {sellerName}
+  </p>
+</div>
+                        <div className="bg-gray-50 p-4 rounded-xl">
+                          <p className="text-sm text-gray-500">
+                            Total
+                          </p>
+
+                          <p className="font-semibold">
+                            ${order.total}
+                          </p>
+                        </div>
+
+                        <div className="bg-gray-50 p-4 rounded-xl">
+                          <p className="text-sm text-gray-500">
+                            Address
+                          </p>
+
+                          <p className="font-semibold">
+                            {order.address}
+                          </p>
+                        </div>
+
+                        <div className="bg-gray-50 p-4 rounded-xl">
+                          <p className="text-sm text-gray-500">
+                            Phone
+                          </p>
+
+                          <p className="font-semibold">
+                            {order.phone}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* DELIVERY */}
+                      <div className="bg-pink-50 border border-pink-100 rounded-xl p-4 mb-4">
+
+                        <p className="text-sm text-gray-500">
+                          Expected Delivery
+                        </p>
+
+                        <p className="font-bold text-pink-600">
+                          Within 2 - 4 Days
+                        </p>
+                      </div>
+
+                      {/* ITEMS */}
+                      <div className="flex flex-col gap-3">
+
+                        {order?.items?.map(
+                          (item, index) => (
+
+                            <div
+                              key={index}
+                              className="flex items-center justify-between border rounded-xl p-3"
+                            >
+
+                              <div>
+                                <h4 className="font-semibold">
+                                  {
+                                    item?.book
+                                      ?.title
+                                  }
+                                </h4>
+
+                                <p className="text-sm text-gray-500">
+                                  Quantity:
+                                  {" "}
+                                  {
+                                    item?.quantity
+                                  }
+                                </p>
+                              </div>
+                            </div>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+      )} 
+
       <Footer />
     </div>
   );
 }
 
+// import { useEffect, useState } from "react";
+// import { useCartStore } from "../store/CartStore";
+// import { useAuthStore } from "../store/auth";
+// import NavBar from "../component/NavBar";
+// import Footer from "../component/Footer";
+// import bgImage from "../assets/images/533643aa8db82414f48d43a992d009dda3961386.png";
+// import Swal from "sweetalert2";
+// import CartPageSkeleton from "../component/skeletons/cart/CartPageSkeleton";
+// import api from "../api/api";
 
+// const BASE_URL = "http://localhost:1337";
+
+// export default function Cart() {
+//   const {
+//     cart,
+//     initCart,
+//     removeFromCart,
+//     updateQuantity,
+//     clearCart,
+//     loading,
+//   } = useCartStore();
+
+//   const user = useAuthStore((s) => s.user);
+
+//   const [checkoutLoading, setCheckoutLoading] =
+//     useState(false);
+
+//   const [showCheckoutModal, setShowCheckoutModal] =
+//     useState(false);
+
+//   const [showOrdersModal, setShowOrdersModal] =
+//     useState(false);
+
+//   const [orders, setOrders] = useState([]);
+
+//   const [ordersLoading, setOrdersLoading] =
+//     useState(false);
+
+//   const [paymentMethod, setPaymentMethod] =
+//     useState("");
+
+//   const [checkoutData, setCheckoutData] =
+//     useState({
+//       address: "",
+//       phone: "",
+//       walletType: "",
+//       cardName: "",
+//       cardNumber: "",
+//       expiry: "",
+//       cvv: "",
+//     });
+
+//   useEffect(() => {
+//     if (!user?.id) return;
+
+//     const loadData = async () => {
+//       await initCart(user);
+//       await fetchOrders();
+//     };
+
+//     loadData();
+//   }, [user?.id]);
+
+//   // ======================
+//   // GET ORDERS (UPDATED ONLY HERE)
+//   // ======================
+//   const fetchOrders = async () => {
+//     if (!user?.id) return;
+
+//     setOrdersLoading(true);
+
+//     try {
+//       const res = await api.get(
+//         `/orders?filters[users_permissions_user][id][$eq]=${user.id}&populate[items][populate]=book&populate=seller`
+//       );
+
+//       const ordersData =
+//         res?.data?.data || [];
+
+//       setOrders(ordersData);
+//     } catch (err) {
+//       Swal.fire({
+//         icon: "error",
+//         title: "Failed to load orders",
+//       });
+//     } finally {
+//       setOrdersLoading(false);
+//     }
+//   };
+
+//   const subtotal = cart.reduce((acc, i) => {
+//     const price = Number(i.price) || 0;
+//     const qty = Number(i.quantity) || 0;
+
+//     return acc + price * qty;
+//   }, 0);
+
+//   const shipping = cart.length ? 10 : 0;
+
+//   const total = subtotal + shipping;
+
+//   const handleChange = (e) => {
+//     setCheckoutData((prev) => ({
+//       ...prev,
+//       [e.target.name]: e.target.value,
+//     }));
+//   };
+
+//   const handleOpenCheckout = () => {
+//     setShowCheckoutModal(true);
+//   };
+
+//   const handleCloseCheckout = () => {
+//     setShowCheckoutModal(false);
+//     setPaymentMethod("");
+//   };
+
+//   const handleOpenOrders = async () => {
+//     await fetchOrders();
+//     setShowOrdersModal(true);
+//   };
+
+//   const handleCloseOrders = () => {
+//     setShowOrdersModal(false);
+//   };
+
+//   const handleCheckout = async () => {
+//     if (!user?.id) return;
+
+//     if (!checkoutData.address || !checkoutData.phone) {
+//       Swal.fire({
+//         icon: "warning",
+//         title: "Missing Data",
+//         text: "Please fill address and phone",
+//       });
+//       return;
+//     }
+
+//     if (!paymentMethod) {
+//       Swal.fire({
+//         icon: "warning",
+//         title: "Choose payment method",
+//       });
+//       return;
+//     }
+
+//     if (paymentMethod === "visa") {
+//       if (
+//         !checkoutData.cardName ||
+//         !checkoutData.cardNumber ||
+//         !checkoutData.expiry ||
+//         !checkoutData.cvv
+//       ) {
+//         Swal.fire({
+//           icon: "warning",
+//           title: "Complete Visa Data",
+//         });
+//         return;
+//       }
+//     }
+
+//     if (paymentMethod === "wallet") {
+//       if (!checkoutData.walletType) {
+//         Swal.fire({
+//           icon: "warning",
+//           title: "Choose Wallet Type",
+//         });
+//         return;
+//       }
+//     }
+
+//     setCheckoutLoading(true);
+
+//     try {
+//       const orderItems = cart.map((item) => ({
+//         quantity: item.quantity,
+//         book: item.bookId,
+//       }));
+
+//       const payload = {
+//         data: {
+//           users_permissions_user: user.id,
+//           items: orderItems,
+//           total: total,
+//           address: checkoutData.address,
+//           phone: checkoutData.phone,
+//           paymentMethod: paymentMethod,
+//           orderStatus: "pending",
+//         },
+//       };
+
+//       await api.post("/orders", payload);
+
+//       await clearCart(user);
+
+//       Swal.fire({
+//         icon: "success",
+//         title: "Order placed successfully 🎉",
+//         timer: 1500,
+//         showConfirmButton: false,
+//       });
+
+//       setCheckoutData({
+//         address: "",
+//         phone: "",
+//         walletType: "",
+//         cardName: "",
+//         cardNumber: "",
+//         expiry: "",
+//         cvv: "",
+//       });
+
+//       handleCloseCheckout();
+
+//       await fetchOrders();
+//     } catch (err) {
+//       Swal.fire({
+//         icon: "error",
+//         title: "Failed to place order",
+//       });
+//     } finally {
+//       setCheckoutLoading(false);
+//     }
+//   };
+
+//   if (loading) return <CartPageSkeleton />;
+
+//   return (
+//     <div className="bg-gray-50 min-h-screen">
+//       <NavBar />
+
+//       <div
+//         className="w-full h-48 bg-cover bg-center"
+//         style={{
+//           backgroundImage: `url(${bgImage})`,
+//         }}
+//       />
+
+//       <div className="max-w-7xl mx-auto px-6 py-10">
+
+//         <div className="flex items-center justify-between mb-8">
+//           <h1 className="text-3xl font-bold">
+//             Shopping Cart
+//           </h1>
+
+//           <button
+//             onClick={handleOpenOrders}
+//             className="bg-black text-white px-5 py-3 rounded-xl"
+//           >
+//             My Orders
+//           </button>
+//         </div>
+
+//         {cart.length === 0 ? (
+//           <div className="bg-white p-10 text-center rounded-xl">
+//             Empty Cart
+//           </div>
+//         ) : (
+//           <div className="grid lg:grid-cols-3 gap-8">
+
+//             <div className="lg:col-span-2 flex flex-col gap-6">
+
+//               {cart.map((item) => {
+
+//                 const imgUrl =
+//                   item?.img ||
+//                   item?.book?.img?.url ||
+//                   item?.book?.img?.data?.attributes?.url ||
+//                   null;
+
+//                 const finalImg = imgUrl
+//                   ? imgUrl.startsWith("http")
+//                     ? imgUrl
+//                     : `${BASE_URL}${imgUrl}`
+//                   : null;
+
+//                 return (
+//                   <div
+//                     key={item.bookId}
+//                     className="bg-white p-4 rounded-xl shadow flex gap-4"
+//                   >
+//                     {finalImg && (
+//                       <img
+//                         src={finalImg}
+//                         className="w-24 h-32 object-cover rounded"
+//                         alt={item.name}
+//                       />
+//                     )}
+
+//                     <div className="flex-1">
+//                       <h2 className="font-semibold text-lg">
+//                         {item.name}
+//                       </h2>
+
+//                       <p className="text-gray-500 mt-1">
+//                         ${item.price}
+//                       </p>
+
+//                       <div className="flex gap-2 mt-4 items-center">
+//                         <button
+//                           className="border px-3 py-1 rounded"
+//                           onClick={() => {
+//                             if (item.quantity <= 1) return;
+
+//                             updateQuantity(
+//                               item.bookId,
+//                               item.quantity - 1,
+//                               user
+//                             );
+//                           }}
+//                         >
+//                           -
+//                         </button>
+
+//                         <span>{item.quantity}</span>
+
+//                         <button
+//                           className="border px-3 py-1 rounded"
+//                           onClick={() =>
+//                             updateQuantity(
+//                               item.bookId,
+//                               item.quantity + 1,
+//                               user
+//                             )
+//                           }
+//                         >
+//                           +
+//                         </button>
+//                       </div>
+//                     </div>
+
+//                     <button
+//                       className="text-red-500"
+//                       onClick={() =>
+//                         removeFromCart(item.bookId, user)
+//                       }
+//                     >
+//                       Remove
+//                     </button>
+//                   </div>
+//                 );
+//               })}
+//             </div>
+
+//             <div className="bg-white p-6 rounded-xl h-fit">
+//               <div className="mb-3">
+//                 Subtotal: ${subtotal}
+//               </div>
+
+//               <div className="mb-3">
+//                 Shipping: ${shipping}
+//               </div>
+
+//               <div className="font-bold text-lg">
+//                 Total: ${total}
+//               </div>
+
+//               <button
+//                 onClick={handleOpenCheckout}
+//                 className="w-full mt-4 bg-pink-600 text-white p-3 rounded"
+//               >
+//                 Checkout
+//               </button>
+//             </div>
+//           </div>
+//         )}
+//       </div>
+
+//       {/* ================= ORDERS MODAL ================= */}
+//       {showOrdersModal && (
+//         <div
+//           onClick={handleCloseOrders}
+//           className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-4"
+//         >
+//           <div
+//             onClick={(e) => e.stopPropagation()}
+//             className="bg-white w-full max-w-3xl rounded-2xl p-6 max-h-[90vh] overflow-y-auto"
+//           >
+//             <h2 className="text-2xl font-bold mb-6">
+//               My Orders
+//             </h2>
+
+//             {ordersLoading ? (
+//               <div className="text-center py-10">
+//                 Loading...
+//               </div>
+//             ) : orders.length === 0 ? (
+//               <div className="text-center py-10">
+//                 No orders found
+//               </div>
+//             ) : (
+//               <div className="flex flex-col gap-6">
+
+//                 {orders.map((order) => {
+
+//                   const sellerName =
+//                     order?.seller?.username ||
+//                     order?.seller?.name ||
+//                     order?.seller?.email ||
+//                     "Not assigned";
+
+//                   return (
+//                     <div
+//                       key={order.id}
+//                       className="border rounded-2xl p-5"
+//                     >
+
+//                       {/* 🔥 ADDED SELLER (ONLY CHANGE) */}
+//                       <div className="mb-3 bg-blue-50 p-3 rounded-xl">
+//                         <p className="text-sm text-gray-500">
+//                           Seller
+//                         </p>
+//                         <p className="font-semibold text-blue-700">
+//                           {sellerName}
+//                         </p>
+//                       </div>
+
+//                       <div className="flex items-center justify-between mb-4">
+//                         <div>
+//                           <h3 className="font-bold text-lg">
+//                             Order #{order.id}
+//                           </h3>
+
+//                           <p className="text-sm text-gray-500">
+//                             {new Date(order.createdAt).toLocaleDateString()}
+//                           </p>
+//                         </div>
+
+//                         <div className="flex flex-wrap gap-2">
+//                           <div className="px-4 py-2 rounded-full text-sm font-semibold capitalize bg-yellow-100 text-yellow-700">
+//                             Order: {order.orderStatus}
+//                           </div>
+
+//                           <div className="px-4 py-2 rounded-full text-sm font-semibold capitalize bg-green-100 text-green-700">
+//                             Payment: {order.paymentStatus || "pending"}
+//                           </div>
+//                         </div>
+//                       </div>
+
+//                       <div className="grid md:grid-cols-2 gap-4 mb-4">
+//                         <div className="bg-gray-50 p-4 rounded-xl">
+//                           <p className="text-sm text-gray-500">
+//                             Payment Method
+//                           </p>
+//                           <p className="font-semibold capitalize">
+//                             {order.paymentMethod}
+//                           </p>
+//                         </div>
+
+//                         <div className="bg-gray-50 p-4 rounded-xl">
+//                           <p className="text-sm text-gray-500">
+//                             Total
+//                           </p>
+//                           <p className="font-semibold">
+//                             ${order.total}
+//                           </p>
+//                         </div>
+//                       </div>
+
+//                       <div className="flex flex-col gap-3">
+//                         {order?.items?.map((item, index) => (
+//                           <div
+//                             key={index}
+//                             className="flex justify-between border p-3 rounded-xl"
+//                           >
+//                             <span>
+//                               {item?.book?.title}
+//                             </span>
+//                             <span>x{item.quantity}</span>
+//                           </div>
+//                         ))}
+//                       </div>
+//                     </div>
+//                   );
+//                 })}
+//               </div>
+//             )}
+//           </div>
+//         </div>
+//       )}
+
+//       <Footer />
+//     </div>
+//   );
+// }

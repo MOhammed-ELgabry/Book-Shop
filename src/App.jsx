@@ -1,9 +1,11 @@
+
 import React, { useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 // Routes Guards
 import PublicRoute from "./component/routes/PublicRoute";
 import ProtectedRoute from "./component/routes/ProtectedRoute";
+import SellerRoute from "./component/routes/SellerRoute"; // 👈 ضيف ده
 
 // Pages
 import RegisterPage from "./pages/RegisterPage";
@@ -17,7 +19,8 @@ import SingleBook from "./pages/SingleBook";
 import Cart from "./pages/Cart";
 import LoveBooks from "./pages/LoveBooks";
 import ProfilePage from "./pages/ProfilePage";
-
+import SellerDashboard from "./pages/SellerDashboard";
+import MyOrders from "./pages/MyOrders";
 // Store
 import { useAuthStore } from "./store/auth";
 
@@ -91,7 +94,7 @@ function AppContent() {
       <Route path="/books/:id" element={<SingleBook />} />
 
       {/* ====================== */}
-      {/* PROTECTED */}
+      {/* PROTECTED (USER) */}
       {/* ====================== */}
       <Route
         path="/cart"
@@ -117,6 +120,25 @@ function AppContent() {
           <ProtectedRoute>
             <ProfilePage />
           </ProtectedRoute>
+        }
+      />
+<Route
+  path="/my-orders"
+  element={
+    <ProtectedRoute>
+      <MyOrders />
+    </ProtectedRoute>
+  }
+/>
+      {/* ====================== */}
+      {/* SELLER DASHBOARD (FIXED) */}
+      {/* ====================== */}
+      <Route
+        path="/seller-dashboard"
+        element={
+          <SellerRoute>
+            <SellerDashboard />
+          </SellerRoute>
         }
       />
     </Routes>

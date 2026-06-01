@@ -1,3 +1,4 @@
+
 // import { useState, useEffect } from "react";
 // import { useAuthStore } from "../store/auth";
 // import Swal from "sweetalert2";
@@ -5,13 +6,16 @@
 // import NavBar from "../component/NavBar";
 // import Footer from "../component/Footer";
 // import bgImage from "../assets/images/533643aa8db82414f48d43a992d009dda3961386.png";
+// import { normalizeUser } from "../utils/normalizeUser";
 
 // const BASE_URL = "http://localhost:1337";
 
 // export default function ProfilePage() {
-//   const { user, token, fetchProfile } = useAuthStore();
+
+//   const { user, token, setUser } = useAuthStore();
 
 //   const [profileId, setProfileId] = useState(null);
+ 
 //   const [loading, setLoading] = useState(false);
 
 //   const [formData, setFormData] = useState({
@@ -25,22 +29,30 @@
 //   const [avatarPreview, setAvatarPreview] = useState("");
 
 //   // ======================
-//   // LOAD PROFILE (FIXED)
+//   // LOAD PROFILE
 //   // ======================
 //   useEffect(() => {
+
 //     const loadProfile = async () => {
+
 //       if (!token || !user?.id) return;
 
 //       try {
-//      const res = await api.get("/users/me?populate=profile");
 
-// console.log("USER DATA:", res.data);
+//         const res = await api.get(
+//           `/profiles?filters[users_permissions_user][id][$eq]=${user.id}&populate=*`
+//         );
 
-//         const userData = res.data;
-//         const profile = userData?.profile;
+//         const profile = res.data?.data?.[0];
 
 //         if (!profile) {
-//           Swal.fire("Info", "No profile found for this user", "info");
+
+//           Swal.fire(
+//             "Info",
+//             "No profile found for this user",
+//             "info"
+//           );
+
 //           return;
 //         }
 
@@ -53,28 +65,58 @@
 //           address: profile.address || "",
 //         });
 
-//         const avatar = profile?.avatar;
+//         // ======================
+//         // AVATAR PREVIEW
+//         // ======================
+//         if (profile?.avatar?.url) {
 
-//         if (avatar?.url) {
-//           setAvatarPreview(
-//             avatar.url.startsWith("http")
-//               ? avatar.url
-//               : `${BASE_URL}${avatar.url}`
-//           );
+//           const avatarUrl =
+//             profile.avatar.url.startsWith("http")
+//               ? profile.avatar.url
+//               : `${BASE_URL}${profile.avatar.url}`;
+
+//           setAvatarPreview(avatarUrl);
 //         }
+
 //       } catch (err) {
-//         console.log("FETCH PROFILE ERROR:", err);
-//         Swal.fire("Error", "Failed to load profile", "error");
+
+//         console.log(
+//           "FETCH PROFILE ERROR:",
+//           err
+//         );
+
+//         Swal.fire(
+//           "Error",
+//           "Failed to load profile",
+//           "error"
+//         );
 //       }
 //     };
 
 //     loadProfile();
+
+//     // ======================
+//     // CLEANUP OBJECT URL
+//     // ======================
+//     return () => {
+
+//       if (
+//         avatarPreview &&
+//         avatarPreview.startsWith("blob:")
+//       ) {
+//         URL.revokeObjectURL(
+//           avatarPreview
+//         );
+//       }
+//     };
+
 //   }, [user?.id, token]);
 
 //   // ======================
 //   // INPUT CHANGE
 //   // ======================
 //   const handleChange = (e) => {
+
 //     setFormData((prev) => ({
 //       ...prev,
 //       [e.target.name]: e.target.value,
@@ -85,50 +127,125 @@
 //   // AVATAR CHANGE
 //   // ======================
 //   const handleAvatarChange = (e) => {
+
 //     const file = e.target.files?.[0];
+
 //     if (!file) return;
 
 //     setAvatarFile(file);
-//     setAvatarPreview(URL.createObjectURL(file));
+
+//     const previewUrl =
+//       URL.createObjectURL(file);
+
+//     setAvatarPreview(previewUrl);
 //   };
 
 //   // ======================
-//   // SUBMIT (FIXED STRAPI FLOW)
+//   // UPDATE PROFILE
 //   // ======================
 //   const handleSubmit = async (e) => {
+
 //     e.preventDefault();
 
 //     if (!profileId) {
-//       Swal.fire("Error", "Profile not found", "error");
+
+//       Swal.fire(
+//         "Error",
+//         "Profile not found",
+//         "error"
+//       );
+
 //       return;
 //     }
 
 //     setLoading(true);
 
 //     try {
+
 //       let avatarId = null;
 
-//       // upload avatar
+//       // ======================
+//       // UPLOAD AVATAR
+//       // ======================
 //       if (avatarFile) {
+
 //         const form = new FormData();
-//         form.append("files", avatarFile);
 
-//         const uploadRes = await api.post("/upload", form);
-//         avatarId = uploadRes.data?.[0]?.id;
+//         form.append(
+//           "files",
+//           avatarFile
+//         );
+
+//         const uploadRes =
+//           await api.post(
+//             "/upload",
+//             form
+//           );
+
+//         avatarId =
+//           uploadRes.data?.[0]?.id;
 //       }
-// console.log("PAYLOAD:", {
-//   ...formData,
-//   avatar: avatarPreview,
-// });
-//       // update profile
-// await api.put(`/profiles/${profileId}`, {
-//   data: {
-//     ...formData,
-//     avatar: avatarId, // 🔥 مهم: ID مش URL
-//   },
-// });
 
-//       await fetchProfile();
+//       // ======================
+//       // PREPARE UPDATE DATA
+//       // ======================
+//       const updatedData = {
+//         ...formData,
+//       };
+
+//       // 🔥 only update avatar if uploaded
+//       if (avatarId) {
+//         updatedData.avatar = avatarId;
+//       }
+
+//       // ======================
+//       // UPDATE PROFILE
+//       // ======================
+//       await api.put(
+//         `/profiles/${profileId}`,
+//         {
+//           data: updatedData,
+//         }
+//       );
+
+//       // ======================
+//       // REFETCH PROFILE
+//       // ======================
+//       const profileRes =
+//         await api.get(
+//           `/profiles?filters[users_permissions_user][id][$eq]=${user.id}&populate=*`
+//         );
+
+//       const updatedProfile =
+//         profileRes.data?.data?.[0];
+
+//       // ======================
+//       // NORMALIZE USER
+//       // ======================
+//       const normalizedUser =
+//         normalizeUser(
+//           user,
+//           updatedProfile
+//         );
+
+//       // ======================
+//       // UPDATE STORE
+//       // ======================
+//       setUser(
+//         normalizedUser,
+//         token
+//       );
+
+//       // ======================
+//       // UPDATE PREVIEW
+//       // ======================
+//       if (
+//         normalizedUser.avatar
+//       ) {
+//         setAvatarPreview(
+//           normalizedUser.avatar
+//         );
+//       }
 
 //       Swal.fire({
 //         icon: "success",
@@ -138,14 +255,21 @@
 //       });
 
 //       setAvatarFile(null);
+
 //     } catch (err) {
-//       console.log("UPDATE PROFILE ERROR:", err);
+
+//       console.log(
+//         "UPDATE PROFILE ERROR:",
+//         err
+//       );
 
 //       Swal.fire({
 //         icon: "error",
 //         title: "Update Failed",
 //       });
+
 //     } finally {
+
 //       setLoading(false);
 //     }
 //   };
@@ -156,15 +280,22 @@
 
 //       <div
 //         className="w-full h-[350px] bg-cover bg-center"
-//         style={{ backgroundImage: `url(${bgImage})` }}
+//         style={{
+//           backgroundImage:
+//             `url(${bgImage})`,
+//         }}
 //       />
 
 //       <div className="flex flex-col items-center py-10 bg-gray-100 min-h-screen">
 
 //         {/* AVATAR */}
 //         <div className="relative mb-6">
+
 //           <img
-//             src={avatarPreview || "https://i.pravatar.cc/150"}
+//             src={
+//               avatarPreview ||
+//               "https://i.pravatar.cc/150"
+//             }
 //             className="w-28 h-28 rounded-full object-cover border-4 border-white shadow"
 //             alt="avatar"
 //           />
@@ -173,7 +304,9 @@
 //             type="file"
 //             id="avatarInput"
 //             hidden
-//             onChange={handleAvatarChange}
+//             onChange={
+//               handleAvatarChange
+//             }
 //           />
 
 //           <label
@@ -189,6 +322,7 @@
 //           onSubmit={handleSubmit}
 //           className="bg-white p-6 rounded-xl shadow w-full max-w-md"
 //         >
+
 //           <h2 className="text-center font-semibold mb-6">
 //             General Information
 //           </h2>
@@ -236,16 +370,19 @@
 //             disabled={loading}
 //             className="w-full bg-pink-500 text-white py-2 rounded"
 //           >
-//             {loading ? "Updating..." : "Update"}
+//             {loading
+//               ? "Updating..."
+//               : "Update"}
 //           </button>
+
 //         </form>
 //       </div>
 
 //       <Footer />
 //     </>
 //   );
-// } 
-//ما قبل اخر تحديث
+// }
+
 import { useState, useEffect } from "react";
 import { useAuthStore } from "../store/auth";
 import Swal from "sweetalert2";
@@ -262,6 +399,7 @@ export default function ProfilePage() {
   const { user, token, setUser } = useAuthStore();
 
   const [profileId, setProfileId] = useState(null);
+
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -269,6 +407,7 @@ export default function ProfilePage() {
     lastName: "",
     phone: "",
     address: "",
+    role: "",
   });
 
   const [avatarFile, setAvatarFile] = useState(null);
@@ -291,6 +430,8 @@ export default function ProfilePage() {
 
         const profile = res.data?.data?.[0];
 
+        console.log("PROFILE DATA:", profile);
+
         if (!profile) {
 
           Swal.fire(
@@ -309,6 +450,7 @@ export default function ProfilePage() {
           lastName: profile.lastName || "",
           phone: profile.phone || "",
           address: profile.address || "",
+          role: profile.role || "user",
         });
 
         // ======================
@@ -607,9 +749,11 @@ export default function ProfilePage() {
             name="address"
             value={formData.address}
             onChange={handleChange}
-            className="w-full border p-2 rounded mb-4"
+            className="w-full border p-2 rounded mb-3"
             placeholder="Address"
           />
+
+       
 
           <button
             type="submit"

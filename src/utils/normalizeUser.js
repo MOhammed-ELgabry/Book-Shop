@@ -27,7 +27,7 @@ export const normalizeUser = (user, profile = null) => {
     provider: user.provider,
     confirmed: user.confirmed,
     blocked: user.blocked,
-
+accountType: user.accountType,
     firstName: profile?.firstName || "",
     lastName: profile?.lastName || "",
 
