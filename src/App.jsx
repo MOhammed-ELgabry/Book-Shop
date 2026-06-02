@@ -5,7 +5,8 @@
 // // Routes Guards
 // import PublicRoute from "./component/routes/PublicRoute";
 // import ProtectedRoute from "./component/routes/ProtectedRoute";
-// import SellerRoute from "./component/routes/SellerRoute"; // 👈 ضيف ده
+// import SellerRoute from "./component/routes/SellerRoute";
+// import AdminRoute from "./component/routes/AdminRoute"; // 👈 NEW
 
 // // Pages
 // import RegisterPage from "./pages/RegisterPage";
@@ -21,6 +22,8 @@
 // import ProfilePage from "./pages/ProfilePage";
 // import SellerDashboard from "./pages/SellerDashboard";
 // import MyOrders from "./pages/MyOrders";
+// import AdminDashboard from "./pages/AdminDashboard"; // 👈 NEW
+
 // // Store
 // import { useAuthStore } from "./store/auth";
 
@@ -34,16 +37,10 @@
 
 //   const hydrated = useAuthStore((state) => state.hydrated);
 
-//   // ======================
-//   // LOAD AUTH FROM STORAGE
-//   // ======================
 //   useEffect(() => {
 //     loadUserFromStorage();
 //   }, [loadUserFromStorage]);
 
-//   // ======================
-//   // WAIT FOR HYDRATION
-//   // ======================
 //   if (!hydrated) {
 //     return (
 //       <div className="w-full h-screen flex items-center justify-center text-xl font-semibold">
@@ -54,6 +51,7 @@
 
 //   return (
 //     <Routes>
+
 //       {/* ====================== */}
 //       {/* HOME */}
 //       {/* ====================== */}
@@ -94,7 +92,7 @@
 //       <Route path="/books/:id" element={<SingleBook />} />
 
 //       {/* ====================== */}
-//       {/* PROTECTED (USER) */}
+//       {/* USER PROTECTED */}
 //       {/* ====================== */}
 //       <Route
 //         path="/cart"
@@ -122,16 +120,18 @@
 //           </ProtectedRoute>
 //         }
 //       />
-// <Route
-//   path="/my-orders"
-//   element={
-//     <ProtectedRoute>
-//       <MyOrders />
-//     </ProtectedRoute>
-//   }
-// />
+
+//       <Route
+//         path="/my-orders"
+//         element={
+//           <ProtectedRoute>
+//             <MyOrders />
+//           </ProtectedRoute>
+//         }
+//       />
+
 //       {/* ====================== */}
-//       {/* SELLER DASHBOARD (FIXED) */}
+//       {/* SELLER */}
 //       {/* ====================== */}
 //       <Route
 //         path="/seller-dashboard"
@@ -141,6 +141,19 @@
 //           </SellerRoute>
 //         }
 //       />
+
+//       {/* ====================== */}
+//       {/* ADMIN DASHBOARD */}
+//       {/* ====================== */}
+//       <Route
+//         path="/admin-dashboard"
+//         element={
+//           <AdminRoute>
+//             <AdminDashboard />
+//           </AdminRoute>
+//         }
+//       />
+
 //     </Routes>
 //   );
 // }
@@ -159,7 +172,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import PublicRoute from "./component/routes/PublicRoute";
 import ProtectedRoute from "./component/routes/ProtectedRoute";
 import SellerRoute from "./component/routes/SellerRoute";
-import AdminRoute from "./component/routes/AdminRoute"; // 👈 NEW
+import AdminRoute from "./component/routes/AdminRoute";
 
 // Pages
 import RegisterPage from "./pages/RegisterPage";
@@ -175,10 +188,11 @@ import LoveBooks from "./pages/LoveBooks";
 import ProfilePage from "./pages/ProfilePage";
 import SellerDashboard from "./pages/SellerDashboard";
 import MyOrders from "./pages/MyOrders";
-import AdminDashboard from "./pages/AdminDashboard"; // 👈 NEW
+import AdminDashboard from "./pages/AdminDashboard";
 
 // Store
 import { useAuthStore } from "./store/auth";
+import { useLanguageStore } from "./store/languageStore";
 
 // Styles
 import "react-loading-skeleton/dist/skeleton.css";
@@ -190,9 +204,18 @@ function AppContent() {
 
   const hydrated = useAuthStore((state) => state.hydrated);
 
+  // 🌍 language
+  const lang = useLanguageStore((state) => state.lang);
+
   useEffect(() => {
     loadUserFromStorage();
   }, [loadUserFromStorage]);
+
+  // 🌍 RTL / LTR control
+  useEffect(() => {
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+  }, [lang]);
 
   if (!hydrated) {
     return (
@@ -205,14 +228,10 @@ function AppContent() {
   return (
     <Routes>
 
-      {/* ====================== */}
       {/* HOME */}
-      {/* ====================== */}
       <Route path="/" element={<HomeBefore />} />
 
-      {/* ====================== */}
       {/* AUTH */}
-      {/* ====================== */}
       <Route element={<PublicLayout />}>
         <Route
           path="/register"
@@ -233,9 +252,7 @@ function AppContent() {
         />
       </Route>
 
-      {/* ====================== */}
-      {/* PUBLIC PAGES */}
-      {/* ====================== */}
+      {/* PUBLIC */}
       <Route path="/about" element={<AboutUs />} />
 
       <Route path="/books" element={<Books />}>
@@ -244,9 +261,7 @@ function AppContent() {
 
       <Route path="/books/:id" element={<SingleBook />} />
 
-      {/* ====================== */}
-      {/* USER PROTECTED */}
-      {/* ====================== */}
+      {/* USER */}
       <Route
         path="/cart"
         element={
@@ -283,9 +298,7 @@ function AppContent() {
         }
       />
 
-      {/* ====================== */}
       {/* SELLER */}
-      {/* ====================== */}
       <Route
         path="/seller-dashboard"
         element={
@@ -295,9 +308,7 @@ function AppContent() {
         }
       />
 
-      {/* ====================== */}
-      {/* ADMIN DASHBOARD */}
-      {/* ====================== */}
+      {/* ADMIN */}
       <Route
         path="/admin-dashboard"
         element={

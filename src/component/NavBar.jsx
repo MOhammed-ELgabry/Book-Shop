@@ -15,6 +15,8 @@
 //   const [scrolled, setScrolled] = useState(false);
 //   const navigate = useNavigate();
 
+
+
 //   const user = useAuthStore((state) => state.user);
 //   const logout = useAuthStore((state) => state.logout);
 
@@ -26,6 +28,7 @@
 
 //   const accountType = user?.accountType?.toLowerCase();
 //   const isSeller = accountType === "seller" || accountType === "admin";
+//   const isAdmin = accountType === "admin"; // ✅ NEW
 
 //   useEffect(() => {
 //     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -169,6 +172,16 @@
 //                 >
 //                   Seller Dashboard
 //                 </button>
+
+//                 {/* ✅ ADMIN BUTTON */}
+//                 {isAdmin && (
+//                   <button
+//                     onClick={() => navigate("/admin-dashboard")}
+//                     className="px-4 py-2 rounded-lg text-white bg-red-600 hover:bg-red-700 transition-all duration-300 shadow-md hover:shadow-lg"
+//                   >
+//                     Admin Dashboard
+//                   </button>
+//                 )}
 //               </div>
 //             )}
 
@@ -252,6 +265,19 @@
 //                   >
 //                     Seller Dashboard
 //                   </button>
+
+//                   {/* ✅ ADMIN MOBILE */}
+//                   {isAdmin && (
+//                     <button
+//                       onClick={() => {
+//                         navigate("/admin-dashboard");
+//                         setMenuOpen(false);
+//                       }}
+//                       className="bg-red-600 px-6 py-2 rounded text-white w-40"
+//                     >
+//                       Admin Dashboard
+//                     </button>
+//                   )}
 //                 </>
 //               )}
 
@@ -278,9 +304,14 @@ import { FaShoppingCart, FaHeart } from "react-icons/fa";
 import Swal from "sweetalert2";
 import "animate.css";
 import logo from "../assets/images/book-bookmark 1.png";
+
 import { useAuthStore } from "../store/auth";
 import { useCartStore } from "../store/CartStore";
 import { useLoveBooksStore } from "../store/LoveBooks";
+
+// 🌍 i18n
+import { useLanguageStore } from "../store/languageStore";
+import { dictionary } from "../i18n/dictionary";
 
 export default function NavBar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -298,7 +329,11 @@ export default function NavBar() {
 
   const accountType = user?.accountType?.toLowerCase();
   const isSeller = accountType === "seller" || accountType === "admin";
-  const isAdmin = accountType === "admin"; // ✅ NEW
+  const isAdmin = accountType === "admin";
+
+  // 🌍 language (READ ONLY)
+  const lang = useLanguageStore((state) => state.lang);
+  const t = dictionary[lang];
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -348,37 +383,48 @@ export default function NavBar() {
       className={`fixed top-0 left-0 w-full h-[92px] z-50 flex justify-between items-center px-10 transition-all duration-300
       ${scrolled ? "bg-white shadow-md" : "bg-transparent"}`}
     >
+
       {/* Logo + Links */}
       <div className="flex gap-2 items-center">
         <img src={logo} alt="logo" className="h-10" />
 
-        <NavLink to="/" className={({ isActive }) =>
-          `text-2xl hidden md:inline-block px-2 ${
-            isActive ? "text-orange-500" : scrolled ? "text-black" : "text-white"
-          }`
-        }>
-          Home
+        <NavLink
+          to="/"
+          className={({ isActive }) =>
+            `text-2xl hidden md:inline-block px-2 ${
+              isActive ? "text-orange-500" : scrolled ? "text-black" : "text-white"
+            }`
+          }
+        >
+          {t.home}
         </NavLink>
 
-        <NavLink to="/books" className={({ isActive }) =>
-          `text-2xl hidden md:inline-block px-2 ${
-            isActive ? "text-orange-500" : scrolled ? "text-black" : "text-white"
-          }`
-        }>
-          Books
+        <NavLink
+          to="/books"
+          className={({ isActive }) =>
+            `text-2xl hidden md:inline-block px-2 ${
+              isActive ? "text-orange-500" : scrolled ? "text-black" : "text-white"
+            }`
+          }
+        >
+          {t.books}
         </NavLink>
 
-        <NavLink to="/about" className={({ isActive }) =>
-          `text-2xl hidden md:inline-block px-2 ${
-            isActive ? "text-orange-500" : scrolled ? "text-black" : "text-white"
-          }`
-        }>
-          About Us
+        <NavLink
+          to="/about"
+          className={({ isActive }) =>
+            `text-2xl hidden md:inline-block px-2 ${
+              isActive ? "text-orange-500" : scrolled ? "text-black" : "text-white"
+            }`
+          }
+        >
+          {t.about}
         </NavLink>
       </div>
 
       {/* Desktop Menu */}
       <div className="hidden md:flex gap-4 items-center">
+
         {user ? (
           <>
             {/* USER INFO */}
@@ -427,29 +473,27 @@ export default function NavBar() {
                 </button>
               </>
             ) : (
-              /* SELLER MODE */
               <div className="flex gap-2 items-center">
                 <button
                   onClick={() => navigate("/my-orders")}
-                  className="px-4 py-2 rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 transition-all duration-300 shadow-md hover:shadow-lg"
+                  className="px-4 py-2 rounded-lg text-white bg-indigo-600 hover:bg-indigo-700"
                 >
-                  My Orders
+                  {t.myOrders}
                 </button>
 
                 <button
                   onClick={() => navigate("/seller-dashboard")}
-                  className="px-4 py-2 rounded-lg text-white bg-black hover:bg-green-700 transition-all duration-300 shadow-md hover:shadow-lg"
+                  className="px-4 py-2 rounded-lg text-white bg-black hover:bg-green-700"
                 >
-                  Seller Dashboard
+                  {t.seller}
                 </button>
 
-                {/* ✅ ADMIN BUTTON */}
                 {isAdmin && (
                   <button
                     onClick={() => navigate("/admin-dashboard")}
-                    className="px-4 py-2 rounded-lg text-white bg-red-600 hover:bg-red-700 transition-all duration-300 shadow-md hover:shadow-lg"
+                    className="px-4 py-2 rounded-lg text-white bg-red-600 hover:bg-red-700"
                   >
-                    Admin Dashboard
+                    {t.admin}
                   </button>
                 )}
               </div>
@@ -460,7 +504,7 @@ export default function NavBar() {
               onClick={handleLogout}
               className="bg-red-500 px-4 py-2 rounded text-white hover:bg-red-600 transition"
             >
-              Logout
+              {t.logout}
             </button>
           </>
         ) : (
@@ -469,16 +513,18 @@ export default function NavBar() {
               onClick={() => navigate("/login")}
               className="bg-[rgba(217,23,108,1)] px-4 py-2 rounded text-white"
             >
-              Log in
+              {lang === "en" ? "Log in" : "تسجيل الدخول"}
             </button>
+
             <button
               onClick={() => navigate("/register")}
               className="bg-white px-4 py-2 rounded text-[rgba(217,23,108,1)]"
             >
-              Sign Up
+              {lang === "en" ? "Sign Up" : "إنشاء حساب"}
             </button>
           </>
         )}
+
       </div>
 
       {/* MOBILE */}
@@ -503,9 +549,9 @@ export default function NavBar() {
       {/* MOBILE MENU */}
       {menuOpen && (
         <div className="absolute top-[92px] left-0 w-full bg-white flex flex-col items-center py-4 space-y-3 shadow-md md:hidden z-50">
-          <Link to="/" onClick={() => setMenuOpen(false)}>Home</Link>
-          <Link to="/books" onClick={() => setMenuOpen(false)}>Books</Link>
-          <Link to="/about" onClick={() => setMenuOpen(false)}>About Us</Link>
+          <Link to="/" onClick={() => setMenuOpen(false)}>{t.home}</Link>
+          <Link to="/books" onClick={() => setMenuOpen(false)}>{t.books}</Link>
+          <Link to="/about" onClick={() => setMenuOpen(false)}>{t.about}</Link>
 
           {user && (
             <>
@@ -516,54 +562,20 @@ export default function NavBar() {
                 </div>
               ) : (
                 <>
-                  <button
-                    onClick={() => {
-                      navigate("/my-orders");
-                      setMenuOpen(false);
-                    }}
-                    className="bg-indigo-600 px-6 py-2 rounded text-white w-40"
-                  >
-                    My Orders
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      navigate("/seller-dashboard");
-                      setMenuOpen(false);
-                    }}
-                    className="bg-black px-6 py-2 rounded text-white w-40"
-                  >
-                    Seller Dashboard
-                  </button>
-
-                  {/* ✅ ADMIN MOBILE */}
+                  <button onClick={() => navigate("/my-orders")}>{t.myOrders}</button>
+                  <button onClick={() => navigate("/seller-dashboard")}>{t.seller}</button>
                   {isAdmin && (
-                    <button
-                      onClick={() => {
-                        navigate("/admin-dashboard");
-                        setMenuOpen(false);
-                      }}
-                      className="bg-red-600 px-6 py-2 rounded text-white w-40"
-                    >
-                      Admin Dashboard
-                    </button>
+                    <button onClick={() => navigate("/admin-dashboard")}>{t.admin}</button>
                   )}
                 </>
               )}
 
-              <button
-                onClick={() => {
-                  handleLogout();
-                  setMenuOpen(false);
-                }}
-                className="bg-red-500 px-6 py-2 rounded text-white w-40"
-              >
-                Logout
-              </button>
+              <button onClick={handleLogout}>{t.logout}</button>
             </>
           )}
         </div>
       )}
+
     </div>
   );
 }
