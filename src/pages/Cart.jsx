@@ -94,7 +94,7 @@ useEffect(() => {
 
     try {
       const res = await api.get(
-        // `/orders?filters[users_permissions_user][id][$eq]=${user.id}&populate[items][populate]=book`
+        
           `/orders?filters[users_permissions_user][id][$eq]=${user.id}&populate[items][populate]=book&populate=seller`
       );
 
