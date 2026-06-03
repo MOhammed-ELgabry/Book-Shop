@@ -1,7 +1,7 @@
 
 
 
-import Header from "../component/Header";
+import Header from "../component/HeaderTemp";
 import Footer from "../component/Footer";
 import { Outlet } from "react-router-dom";
 import NavBar from "../component/NavBar";
