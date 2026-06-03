@@ -31,7 +31,7 @@ export default function Books() {
         setLoading(true);
 
         const res = await fetch(
-          "http://localhost:1337/api/books?populate=*"
+          `${import.meta.env.VITE_API_URL}/api/books?populate=*`
         );
         const data = await res.json();
 
@@ -43,8 +43,8 @@ export default function Books() {
           price: item.price,
           category: item.category?.name || "Unknown",
           img: item.img?.url
-            ? `http://localhost:1337${item.img.url}`
-            : "",
+  ? `${import.meta.env.VITE_API_URL}${item.img.url}`
+  : "",
         }));
 
         setBooks(formatted);

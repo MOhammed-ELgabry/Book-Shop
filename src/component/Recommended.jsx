@@ -65,7 +65,7 @@ export default function Recommended({ recommended }) {
             <div className="flex gap-3">
 
               <img
-                src={`http://localhost:1337${el.image.url}`}
+                src={`${import.meta.env.VITE_API_URL}${el.image.url}`}
                 alt=""
                 className="w-50 object-cover p-2 animate__animated animate__zoomIn"
               />

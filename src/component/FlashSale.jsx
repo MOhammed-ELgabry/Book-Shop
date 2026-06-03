@@ -30,7 +30,7 @@ export default function FlashSale() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get("http://localhost:1337/api/sales?populate=*");
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/sales?populate=*`);
         setSale(res.data.data);
       } catch (err) {
         console.log(err);
@@ -110,7 +110,7 @@ export default function FlashSale() {
         >
           <div className="flex-[0.35]">
             <img
-              src={`http://localhost:1337${el.image.url}`}
+              src={`${import.meta.env.VITE_API_URL}${el.image.url}`}
               className="w-full h-full object-cover rounded"
               alt=""
             />

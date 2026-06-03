@@ -3,7 +3,7 @@
 import { create } from "zustand";
 import api from "../api/api";
 
-const BASE_URL = "http://localhost:1337";
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 // ======================
 // FETCH CART

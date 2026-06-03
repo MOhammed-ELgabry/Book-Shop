@@ -9,7 +9,7 @@ import Swal from "sweetalert2";
 import CartPageSkeleton from "../component/skeletons/cart/CartPageSkeleton";
 import api from "../api/api";
 
-const BASE_URL = "http://localhost:1337";
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 export default function Cart() {
   const {

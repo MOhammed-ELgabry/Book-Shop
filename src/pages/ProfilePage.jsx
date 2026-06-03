@@ -8,7 +8,7 @@ import Footer from "../component/Footer";
 import bgImage from "../assets/images/533643aa8db82414f48d43a992d009dda3961386.png";
 import { normalizeUser } from "../utils/normalizeUser";
 
-const BASE_URL = "http://localhost:1337";
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 export default function ProfilePage() {
 
