@@ -8,7 +8,7 @@ import bgImage from "../assets/images/533643aa8db82414f48d43a992d009dda3961386.p
 import Swal from "sweetalert2";
 import CartPageSkeleton from "../component/skeletons/cart/CartPageSkeleton";
 import api from "../api/api";
-
+import { getStrapiMedia } from "../utils/getStrapiMedia";
 const BASE_URL = import.meta.env.VITE_API_URL;
 
 export default function Cart() {
@@ -371,18 +371,13 @@ useEffect(() => {
 
               {cart.map((item) => {
 
-                const imgUrl =
-                  item?.img ||
-                  item?.book?.img?.url ||
-                  item?.book?.img?.data?.attributes
-                    ?.url ||
-                  null;
+             const imgUrl =
+  item?.img ||
+  item?.book?.img?.url ||
+  item?.book?.img?.data?.attributes?.url ||
+  null;
 
-                const finalImg = imgUrl
-                  ? imgUrl.startsWith("http")
-                    ? imgUrl
-                    : `${BASE_URL}${imgUrl}`
-                  : null;
+const finalImg = getStrapiMedia(imgUrl);
 
                 return (
                   <div
@@ -917,4 +912,3 @@ useEffect(() => {
     </div>
   );
 }
-
