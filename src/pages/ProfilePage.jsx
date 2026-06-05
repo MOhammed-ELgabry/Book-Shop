@@ -7,7 +7,7 @@ import NavBar from "../component/NavBar";
 import Footer from "../component/Footer";
 import bgImage from "../assets/images/533643aa8db82414f48d43a992d009dda3961386.png";
 import { normalizeUser } from "../utils/normalizeUser";
-
+import { getStrapiMedia } from "../utils/getStrapiMedia";
 const BASE_URL = import.meta.env.VITE_API_URL;
 
 export default function ProfilePage() {
@@ -74,10 +74,7 @@ export default function ProfilePage() {
         // ======================
         if (profile?.avatar?.url) {
 
-          const avatarUrl =
-            profile.avatar.url.startsWith("http")
-              ? profile.avatar.url
-              : `${BASE_URL}${profile.avatar.url}`;
+          const avatarUrl = getStrapiMedia(profile.avatar?.url);
 
           setAvatarPreview(avatarUrl);
         }
@@ -243,14 +240,18 @@ export default function ProfilePage() {
       // ======================
       // UPDATE PREVIEW
       // ======================
-      if (
-        normalizedUser.avatar
-      ) {
-        setAvatarPreview(
-          normalizedUser.avatar
-        );
-      }
 
+      // تعديل للرفع 
+      // if (
+      //   normalizedUser.avatar
+      // ) {
+      //   setAvatarPreview(
+      //     normalizedUser.avatar
+      //   );
+      // }
+setAvatarPreview(
+  getStrapiMedia(normalizedUser.avatar)
+);
       Swal.fire({
         icon: "success",
         title: "Profile Updated",
@@ -297,9 +298,10 @@ export default function ProfilePage() {
 
           <img
             src={
-              avatarPreview ||
-              "https://i.pravatar.cc/150"
-            }
+  avatarPreview ||
+  getStrapiMedia(user?.avatar?.url) ||
+  "https://i.pravatar.cc/150"
+}
             className="w-28 h-28 rounded-full object-cover border-4 border-white shadow"
             alt="avatar"
           />
