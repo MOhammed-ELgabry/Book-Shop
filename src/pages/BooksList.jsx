@@ -156,10 +156,13 @@ export default function BookList() {
           className="bg-white rounded-xl shadow-md p-6 flex flex-col lg:flex-row gap-6 items-center lg:items-start cursor-pointer"
         >
           <img
-            src={book.img}
-            alt={book.name}
-            className="w-40 h-56 object-cover rounded-lg"
-          />
+          src={
+  book.img
+    ? book.img.startsWith("http")
+      ? book.img
+      : `${import.meta.env.VITE_API_URL}${book.img}`
+    : ""
+}
 
           <div className="flex flex-col flex-1 gap-3">
             <div className="flex justify-between items-start">
