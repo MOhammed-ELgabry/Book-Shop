@@ -99,38 +99,22 @@ export default function RegisterPage() {
 
       const { user, jwt } = registerRes.data;
 
-      // await axios.post(
-      //   `${BASE_URL}/api/profiles`,
-      //   {
-      //     data: {
-      //       firstName: values.firstName,
-      //       lastName: values.lastName,
-      //       phone: "",
-      //       address: "",
-      //       users_permissions_user: user.id,
-      //     },
-      //   },
-      //   {
-      //     headers: { Authorization: `Bearer ${jwt}` },
-      //   }
-      // );
       await axios.post(
-  `${BASE_URL}/api/profiles`,
-  {
-    data: {
-      firstName: values.firstName,
-      lastName: values.lastName,
-      phone: "",
-      address: "",
-      users_permissions_user: {
-        connect: [user.id],
-      },
-    },
-  },
-  {
-    headers: { Authorization: `Bearer ${jwt}` },
-  }
-);
+        `${BASE_URL}/api/profiles`,
+        {
+          data: {
+            firstName: values.firstName,
+            lastName: values.lastName,
+            phone: "",
+            address: "",
+            users_permissions_user: user.id,
+          },
+        },
+        {
+          headers: { Authorization: `Bearer ${jwt}` },
+        }
+      );
+   
 
       const profileRes = await axios.get(
         `${BASE_URL}/api/profiles?filters[users_permissions_user][id][$eq]=${user.id}&populate=*`,
