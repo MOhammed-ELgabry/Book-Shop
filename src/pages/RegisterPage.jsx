@@ -86,71 +86,148 @@ export default function RegisterPage() {
     agree: Yup.bool().oneOf([true], "Required"),
   });
 
-  const registerSubmit = async (values, { resetForm }) => {
-    try {
-      const registerRes = await axios.post(
-        `${BASE_URL}/api/auth/local/register`,
-        {
-          username: `${values.firstName}_${values.lastName}_${Date.now()}`,
-          email: values.email,
-          password: values.password,
-        }
-      );
+  // const registerSubmit = async (values, { resetForm }) => {
+  //   try {
+  //     const registerRes = await axios.post(
+  //       `${BASE_URL}/api/auth/local/register`,
+  //       {
+  //         username: `${values.firstName}_${values.lastName}_${Date.now()}`,
+  //         email: values.email,
+  //         password: values.password,
+  //       }
+  //     );
 
-      const { user, jwt } = registerRes.data;
+  //     const { user, jwt } = registerRes.data;
 
-      await axios.post(
-        `${BASE_URL}/api/profiles`,
-        {
-          data: {
-            firstName: values.firstName,
-            lastName: values.lastName,
-            phone: "",
-            address: "",
-           users_permissions_user: {
-  connect: [user.id],
-},
-          },
-        },
-        {
-          headers: { Authorization: `Bearer ${jwt}` },
-        }
-      );
+  //     await axios.post(
+  //       `${BASE_URL}/api/profiles`,
+  //       {
+  //         data: {
+  //           firstName: values.firstName,
+  //           lastName: values.lastName,
+  //           phone: "",
+  //           address: "",
+  //           users_permissions_user: user.id,
+  //         },
+  //       },
+  //       {
+  //         headers: { Authorization: `Bearer ${jwt}` },
+  //       }
+  //     );
    
 
-      const profileRes = await axios.get(
-        `${BASE_URL}/api/profiles?filters[users_permissions_user][id][$eq]=${user.id}&populate=*`,
-        {
-          headers: { Authorization: `Bearer ${jwt}` },
-        }
-      );
+  //     const profileRes = await axios.get(
+  //       `${BASE_URL}/api/profiles?filters[users_permissions_user][id][$eq]=${user.id}&populate=*`,
+  //       {
+  //         headers: { Authorization: `Bearer ${jwt}` },
+  //       }
+  //     );
 
-      const profile = profileRes.data?.data?.[0];
-      const normalizedUser = normalizeUser(user, profile);
+  //     const profile = profileRes.data?.data?.[0];
+  //     const normalizedUser = normalizeUser(user, profile);
 
-      setUser(normalizedUser, jwt);
+  //     setUser(normalizedUser, jwt);
 
-      Swal.fire({
-        icon: "success",
-        title: lang === "en" ? "Success" : "نجاح",
-        text:
-          lang === "en"
-            ? "Account created successfully"
-            : "تم إنشاء الحساب بنجاح",
-      });
+  //     Swal.fire({
+  //       icon: "success",
+  //       title: lang === "en" ? "Success" : "نجاح",
+  //       text:
+  //         lang === "en"
+  //           ? "Account created successfully"
+  //           : "تم إنشاء الحساب بنجاح",
+  //     });
 
-      resetForm();
-      navigate("/");
-    } catch (err) {
-      Swal.fire({
-        icon: "error",
-        title: lang === "en" ? "Error" : "خطأ",
-        text:
-          err.response?.data?.error?.message ||
-          (lang === "en" ? "Register failed" : "فشل التسجيل"),
-      });
-    }
-  };
+  //     resetForm();
+  //     navigate("/");
+  //   } catch (err) {
+  //     Swal.fire({
+  //       icon: "error",
+  //       title: lang === "en" ? "Error" : "خطأ",
+  //       text:
+  //         err.response?.data?.error?.message ||
+  //         (lang === "en" ? "Register failed" : "فشل التسجيل"),
+  //     });
+  //   }
+  // };
+  const registerSubmit = async (values, { resetForm }) => {
+  try {
+    // 1. Register user
+    const registerRes = await axios.post(
+      `${BASE_URL}/api/auth/local/register`,
+      {
+        username: `${values.firstName}_${values.lastName}_${Date.now()}`,
+        email: values.email,
+        password: values.password,
+      }
+    );
+
+    const { user, jwt } = registerRes.data;
+
+    // 2. Create profile WITHOUT relation (مهم جدًا)
+    const profileRes = await axios.post(
+      `${BASE_URL}/api/profiles`,
+      {
+        data: {
+          firstName: values.firstName,
+          lastName: values.lastName,
+          phone: "",
+          address: "",
+        },
+      },
+      {
+        headers: { Authorization: `Bearer ${jwt}` },
+      }
+    );
+
+    const profileId = profileRes.data?.data?.id;
+
+    // 3. اربط الـ profile بالـ user (من الجهة الصح)
+    await axios.put(
+      `${BASE_URL}/api/users/${user.id}`,
+      {
+        profile: profileId,
+      },
+      {
+        headers: { Authorization: `Bearer ${jwt}` },
+      }
+    );
+
+    // 4. Get full profile
+    const profileFetch = await axios.get(
+      `${BASE_URL}/api/profiles?filters[id][$eq]=${profileId}&populate=*`,
+      {
+        headers: { Authorization: `Bearer ${jwt}` },
+      }
+    );
+
+    const profile = profileFetch.data?.data?.[0];
+
+    // 5. Normalize user
+    const normalizedUser = normalizeUser(user, profile);
+
+    setUser(normalizedUser, jwt);
+
+    Swal.fire({
+      icon: "success",
+      title: lang === "en" ? "Success" : "نجاح",
+      text:
+        lang === "en"
+          ? "Account created successfully"
+          : "تم إنشاء الحساب بنجاح",
+    });
+
+    resetForm();
+    navigate("/");
+  } catch (err) {
+    Swal.fire({
+      icon: "error",
+      title: lang === "en" ? "Error" : "خطأ",
+      text:
+        err.response?.data?.error?.message ||
+        (lang === "en" ? "Register failed" : "فشل التسجيل"),
+    });
+  }
+};
 
   if (loading) return <RegisterSkeleton />;
 
