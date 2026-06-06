@@ -107,7 +107,9 @@ export default function RegisterPage() {
             lastName: values.lastName,
             phone: "",
             address: "",
-            users_permissions_user: user.id,
+           users_permissions_user: {
+  connect: [user.id],
+},
           },
         },
         {
