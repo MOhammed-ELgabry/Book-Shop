@@ -60,7 +60,7 @@ export default function RegisterPage() {
   //     });
   //   }
   // };
-import api from "../api/api";
+
 
 const handleGoogleLogin = async () => {
   try {
