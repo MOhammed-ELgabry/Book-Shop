@@ -28,74 +28,74 @@ export default function RegisterPage() {
 
   const setUser = useAuthStore((state) => state.setUser);
 
-  // const handleGoogleLogin = async () => {
-  //   try {
-  //     const res = await loginWithGoogle();
-  //     const { jwt, user } = res;
+  const handleGoogleLogin = async () => {
+    try {
+      const res = await loginWithGoogle();
+      const { jwt, user } = res;
 
-  //     const profileRes = await axios.get(
-  //       `${BASE_URL}/api/profiles?filters[users_permissions_user][id][$eq]=${user.id}&populate=*`,
-  //       {
-  //         headers: { Authorization: `Bearer ${jwt}` },
-  //       }
-  //     );
+      const profileRes = await axios.get(
+        `${BASE_URL}/api/profiles?filters[users_permissions_user][id][$eq]=${user.id}&populate=*`,
+        {
+          headers: { Authorization: `Bearer ${jwt}` },
+        }
+      );
 
-  //     const profile = profileRes.data?.data?.[0];
-  //     const normalizedUser = normalizeUser(user, profile);
+      const profile = profileRes.data?.data?.[0];
+      const normalizedUser = normalizeUser(user, profile);
 
-  //     setUser(normalizedUser, jwt);
+      setUser(normalizedUser, jwt);
 
-  //     Swal.fire({
-  //       icon: "success",
-  //       title: lang === "en" ? "Success" : "تم بنجاح",
-  //       text: lang === "en" ? "Logged in with Google" : "تم تسجيل الدخول بجوجل",
-  //     });
+      Swal.fire({
+        icon: "success",
+        title: lang === "en" ? "Success" : "تم بنجاح",
+        text: lang === "en" ? "Logged in with Google" : "تم تسجيل الدخول بجوجل",
+      });
 
-  //     navigate("/");
-  //   } catch (err) {
-  //     Swal.fire({
-  //       icon: "error",
-  //       title: lang === "en" ? "Error" : "خطأ",
-  //       text: lang === "en" ? "Google login failed" : "فشل تسجيل الدخول بجوجل",
-  //     });
-  //   }
-  // };
+      navigate("/");
+    } catch (err) {
+      Swal.fire({
+        icon: "error",
+        title: lang === "en" ? "Error" : "خطأ",
+        text: lang === "en" ? "Google login failed" : "فشل تسجيل الدخول بجوجل",
+      });
+    }
+  };
 
 
-const handleGoogleLogin = async () => {
-  try {
-    const firebaseRes = await loginWithGoogle();
-    const firebaseUser = firebaseRes.user;
+// const handleGoogleLogin = async () => {
+//   try {
+//     const firebaseRes = await loginWithGoogle();
+//     const firebaseUser = firebaseRes.user;
 
-    const res = await api.post("/google-auth/googleLogin", {
-      email: firebaseUser.email,
-      username: firebaseUser.displayName,
-      firebaseUid: firebaseUser.uid,
-      googleAvatar: firebaseUser.photoURL,
-    });
+//     const res = await api.post("/google-auth/googleLogin", {
+//       email: firebaseUser.email,
+//       username: firebaseUser.displayName,
+//       firebaseUid: firebaseUser.uid,
+//       googleAvatar: firebaseUser.photoURL,
+//     });
 
-    const { jwt, user } = res.data;
+//     const { jwt, user } = res.data;
 
-    const profile = user.profile;
-    const normalizedUser = normalizeUser(user, profile);
+//     const profile = user.profile;
+//     const normalizedUser = normalizeUser(user, profile);
 
-    setUser(normalizedUser, jwt);
+//     setUser(normalizedUser, jwt);
 
-    Swal.fire({
-      icon: "success",
-      title: lang === "en" ? "Success" : "تم بنجاح",
-      text: lang === "en" ? "Logged in with Google" : "تم تسجيل الدخول بجوجل",
-    });
+//     Swal.fire({
+//       icon: "success",
+//       title: lang === "en" ? "Success" : "تم بنجاح",
+//       text: lang === "en" ? "Logged in with Google" : "تم تسجيل الدخول بجوجل",
+//     });
 
-    navigate("/");
-  } catch (err) {
-    Swal.fire({
-      icon: "error",
-      title: lang === "en" ? "Error" : "خطأ",
-      text: lang === "en" ? "Google login failed" : "فشل تسجيل الدخول بجوجل",
-    });
-  }
-};
+//     navigate("/");
+//   } catch (err) {
+//     Swal.fire({
+//       icon: "error",
+//       title: lang === "en" ? "Error" : "خطأ",
+//       text: lang === "en" ? "Google login failed" : "فشل تسجيل الدخول بجوجل",
+//     });
+//   }
+// };
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 600);
     return () => clearTimeout(timer);
