@@ -282,7 +282,7 @@
 //   );
 // }
 
-// import { useState, useEffect } from "react";
+// import { useState, useEffect, useMemo } from "react";
 // import { Link, NavLink, useNavigate } from "react-router-dom";
 // import { AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
 // import { FaShoppingCart, FaHeart } from "react-icons/fa";
@@ -295,11 +295,9 @@
 // import { useCartStore } from "../store/CartStore";
 // import { useLoveBooksStore } from "../store/LoveBooks";
 
-// // 🌍 i18n
 // import { useLanguageStore } from "../store/languageStore";
 // import { dictionary } from "../i18n/dictionary";
 
-// // ⭐ IMAGE HELPER
 // import { getStrapiMedia } from "../utils/getStrapiMedia";
 
 // export default function NavBar() {
@@ -310,27 +308,39 @@
 //   const user = useAuthStore((state) => state.user);
 //   const logout = useAuthStore((state) => state.logout);
 
-//   const cart = useCartStore((state) => state.cart);
-//   const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
+//   const cart = useCartStore((state) => state.cart) || [];
+//   const loveBooks = useLoveBooksStore((state) => state.loveBooks) || [];
 
-//   const loveBooks = useLoveBooksStore((state) => state.loveBooks);
+//   const totalItems = cart.reduce((acc, item) => acc + (item?.quantity || 0), 0);
 //   const loveBooksCount = loveBooks.length;
-
-//   const accountType = user?.accountType?.toLowerCase();
-//   const isSeller = accountType === "seller" || accountType === "admin";
-//   const isAdmin = accountType === "admin";
 
 //   const lang = useLanguageStore((state) => state.lang);
 //   const t = dictionary[lang];
 
+//   const accountType = user?.accountType?.toLowerCase() || "";
+//   const isSeller = ["seller", "admin"].includes(accountType);
+//   const isAdmin = accountType === "admin";
+//   const isLoggedIn = !!user;
+
 //   useEffect(() => {
-//     const handleScroll = () => setScrolled(window.scrollY > 50);
+//     let timeout;
+
+//     const handleScroll = () => {
+//       clearTimeout(timeout);
+//       timeout = setTimeout(() => {
+//         setScrolled(window.scrollY > 50);
+//       }, 50);
+//     };
+
 //     window.addEventListener("scroll", handleScroll);
-//     return () => window.removeEventListener("scroll", handleScroll);
+//     return () => {
+//       window.removeEventListener("scroll", handleScroll);
+//       clearTimeout(timeout);
+//     };
 //   }, []);
 
-//   const handleLogout = () => {
-//     Swal.fire({
+//   const handleLogout = async () => {
+//     const result = await Swal.fire({
 //       title: "Are you sure?",
 //       text: "You will be logged out!",
 //       icon: "warning",
@@ -338,33 +348,32 @@
 //       confirmButtonColor: "#d33",
 //       cancelButtonColor: "#3085d6",
 //       confirmButtonText: "Yes, logout",
-//     }).then((result) => {
-//       if (result.isConfirmed) {
-//         logout();
-//         navigate("/login");
-//         Swal.fire({
-//           icon: "success",
-//           title: "Logged out!",
-//           timer: 1500,
-//           showConfirmButton: false,
-//         });
-//       }
 //     });
+
+//     if (result.isConfirmed) {
+//       logout();
+//       navigate("/login");
+
+//       Swal.fire({
+//         icon: "success",
+//         title: "Logged out!",
+//         timer: 1500,
+//         showConfirmButton: false,
+//       });
+//     }
 //   };
 
-//   const getDisplayName = () => {
+//   const displayName = useMemo(() => {
 //     if (!user) return "";
 //     if (user.firstName || user.lastName) {
 //       return `${user.firstName || ""} ${user.lastName || ""}`.trim();
 //     }
 //     return user.username || user.email || "User";
-//   };
+//   }, [user]);
 
-//   // ⭐ FIXED USING HELPER
-//   const avatarUrl = getStrapiMedia(
-//     user?.avatar,
-//     "https://i.pravatar.cc/40"
-//   );
+//   const avatarUrl = user?.avatar
+//     ? getStrapiMedia(user.avatar, "https://i.pravatar.cc/40")
+//     : "https://i.pravatar.cc/40";
 
 //   return (
 //     <div
@@ -379,7 +388,11 @@
 //           to="/"
 //           className={({ isActive }) =>
 //             `text-2xl hidden md:inline-block px-2 ${
-//               isActive ? "text-orange-500" : scrolled ? "text-black" : "text-white"
+//               isActive
+//                 ? "text-orange-500"
+//                 : scrolled
+//                 ? "text-black"
+//                 : "text-white"
 //             }`
 //           }
 //         >
@@ -390,7 +403,11 @@
 //           to="/books"
 //           className={({ isActive }) =>
 //             `text-2xl hidden md:inline-block px-2 ${
-//               isActive ? "text-orange-500" : scrolled ? "text-black" : "text-white"
+//               isActive
+//                 ? "text-orange-500"
+//                 : scrolled
+//                 ? "text-black"
+//                 : "text-white"
 //             }`
 //           }
 //         >
@@ -401,7 +418,11 @@
 //           to="/about"
 //           className={({ isActive }) =>
 //             `text-2xl hidden md:inline-block px-2 ${
-//               isActive ? "text-orange-500" : scrolled ? "text-black" : "text-white"
+//               isActive
+//                 ? "text-orange-500"
+//                 : scrolled
+//                 ? "text-black"
+//                 : "text-white"
 //             }`
 //           }
 //         >
@@ -411,7 +432,7 @@
 
 //       {/* Desktop Menu */}
 //       <div className="hidden md:flex gap-4 items-center">
-//         {user ? (
+//         {isLoggedIn ? (
 //           <>
 //             {/* USER INFO */}
 //             <div
@@ -420,8 +441,8 @@
 //                 scrolled ? "text-black" : "text-white"
 //               }`}
 //             >
-//               <span>{getDisplayName()}</span>
-//               <span className="text-xs opacity-70">{user.email}</span>
+//               <span>{displayName}</span>
+//               <span className="text-xs opacity-70">{user?.email}</span>
 //             </div>
 
 //             <img
@@ -447,7 +468,10 @@
 //                   />
 //                 </button>
 
-//                 <button onClick={() => navigate("/lovebooks")} className="relative">
+//                 <button
+//                   onClick={() => navigate("/lovebooks")}
+//                   className="relative"
+//                 >
 //                   <FaHeart
 //                     size={20}
 //                     className={
@@ -507,7 +531,6 @@
 //     </div>
 //   );
 // }
-
 import { useState, useEffect, useMemo } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
@@ -537,7 +560,11 @@ export default function NavBar() {
   const cart = useCartStore((state) => state.cart) || [];
   const loveBooks = useLoveBooksStore((state) => state.loveBooks) || [];
 
-  const totalItems = cart.reduce((acc, item) => acc + (item?.quantity || 0), 0);
+  const totalItems = cart.reduce(
+    (acc, item) => acc + (item?.quantity || 0),
+    0
+  );
+
   const loveBooksCount = loveBooks.length;
 
   const lang = useLanguageStore((state) => state.lang);
@@ -578,6 +605,7 @@ export default function NavBar() {
 
     if (result.isConfirmed) {
       logout();
+      setMenuOpen(false);
       navigate("/login");
 
       Swal.fire({
@@ -606,7 +634,7 @@ export default function NavBar() {
       className={`fixed top-0 left-0 w-full h-[92px] z-50 flex justify-between items-center px-10 transition-all duration-300
       ${scrolled ? "bg-white shadow-md" : "bg-transparent"}`}
     >
-      {/* Logo + Links */}
+      {/* LEFT: LOGO + LINKS */}
       <div className="flex gap-2 items-center">
         <img src={logo} alt="logo" className="h-10" />
 
@@ -656,7 +684,7 @@ export default function NavBar() {
         </NavLink>
       </div>
 
-      {/* Desktop Menu */}
+      {/* RIGHT: DESKTOP */}
       <div className="hidden md:flex gap-4 items-center">
         {isLoggedIn ? (
           <>
@@ -681,7 +709,10 @@ export default function NavBar() {
             {/* USER MODE */}
             {!isSeller ? (
               <>
-                <button onClick={() => navigate("/cart")} className="relative">
+                <button
+                  onClick={() => navigate("/cart")}
+                  className="relative"
+                >
                   <FaShoppingCart
                     size={20}
                     className={
@@ -692,6 +723,11 @@ export default function NavBar() {
                         : "text-white"
                     }
                   />
+                  {totalItems > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                      {totalItems}
+                    </span>
+                  )}
                 </button>
 
                 <button
@@ -708,6 +744,11 @@ export default function NavBar() {
                         : "text-white"
                     }
                   />
+                  {loveBooksCount > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                      {loveBooksCount}
+                    </span>
+                  )}
                 </button>
               </>
             ) : (
@@ -731,7 +772,7 @@ export default function NavBar() {
             {/* LOGOUT */}
             <button
               onClick={handleLogout}
-              className="bg-red-500 px-4 py-2 rounded text-white"
+              className="bg-red-500 px-4 py-2 rounded text-white hover:bg-red-600 transition"
             >
               {t.logout}
             </button>
@@ -754,6 +795,144 @@ export default function NavBar() {
           </>
         )}
       </div>
+
+      {/* MOBILE HEADER */}
+      <div className="md:hidden flex items-center gap-3">
+        {user && (
+          <img
+            onClick={() => navigate("/profile")}
+            src={avatarUrl}
+            className="w-8 h-8 rounded-full object-cover cursor-pointer"
+            alt="avatar"
+          />
+        )}
+
+        <button onClick={() => setMenuOpen(!menuOpen)}>
+          {menuOpen ? (
+            <AiOutlineClose
+              size={25}
+              className={scrolled ? "text-black" : "text-white"}
+            />
+          ) : (
+            <AiOutlineMenu
+              size={25}
+              className={scrolled ? "text-black" : "text-white"}
+            />
+          )}
+        </button>
+      </div>
+
+      {/* MOBILE MENU */}
+      {menuOpen && (
+        <div className="absolute top-[92px] left-0 w-full bg-white flex flex-col items-center py-4 space-y-3 shadow-md md:hidden z-50">
+          <Link to="/" onClick={() => setMenuOpen(false)}>
+            {t.home}
+          </Link>
+
+          <Link to="/books" onClick={() => setMenuOpen(false)}>
+            {t.books}
+          </Link>
+
+          <Link to="/about" onClick={() => setMenuOpen(false)}>
+            {t.about}
+          </Link>
+
+          {isLoggedIn && (
+            <>
+              {!isSeller ? (
+                <div className="flex gap-6 items-center">
+                  <button
+                    onClick={() => {
+                      navigate("/cart");
+                      setMenuOpen(false);
+                    }}
+                    className="relative"
+                  >
+                    <FaShoppingCart />
+                    {totalItems > 0 && (
+                      <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">
+                        {totalItems}
+                      </span>
+                    )}
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      navigate("/lovebooks");
+                      setMenuOpen(false);
+                    }}
+                    className="relative"
+                  >
+                    <FaHeart />
+                    {loveBooksCount > 0 && (
+                      <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">
+                        {loveBooksCount}
+                      </span>
+                    )}
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <button
+                    onClick={() => {
+                      navigate("/my-orders");
+                      setMenuOpen(false);
+                    }}
+                  >
+                    {t.myOrders}
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      navigate("/seller-dashboard");
+                      setMenuOpen(false);
+                    }}
+                  >
+                    {t.seller}
+                  </button>
+
+                  {isAdmin && (
+                    <button
+                      onClick={() => {
+                        navigate("/admin-dashboard");
+                        setMenuOpen(false);
+                      }}
+                    >
+                      {t.admin}
+                    </button>
+                  )}
+                </>
+              )}
+
+              <button onClick={handleLogout} className="text-red-500">
+                {t.logout}
+              </button>
+            </>
+          )}
+
+          {!isLoggedIn && (
+            <>
+              <button
+                onClick={() => {
+                  navigate("/login");
+                  setMenuOpen(false);
+                }}
+              >
+                {lang === "en" ? "Log in" : "تسجيل الدخول"}
+              </button>
+
+              <button
+                onClick={() => {
+                  navigate("/register");
+                  setMenuOpen(false);
+                }}
+              >
+                {lang === "en" ? "Sign Up" : "إنشاء حساب"}
+              </button>
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 }
