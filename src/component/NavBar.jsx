@@ -531,6 +531,8 @@
 //     </div>
 //   );
 // }
+
+
 import { useState, useEffect, useMemo } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
@@ -753,16 +755,22 @@ export default function NavBar() {
               </>
             ) : (
               <div className="flex gap-2 items-center">
-                <button onClick={() => navigate("/my-orders")}>
+                <button className="px-4 py-2 rounded-md bg-green-600 text-white font-semibold
+hover:bg-green-700 hover:scale-105 transition-all duration-200
+active:scale-95 shadow-md" onClick={() => navigate("/my-orders")}>
                   {t.myOrders}
                 </button>
 
-                <button onClick={() => navigate("/seller-dashboard")}>
+                <button className="px-4 py-2 rounded-md bg-indigo-600 text-white font-semibold
+hover:bg-indigo-700 hover:scale-105 transition-all duration-200
+active:scale-95 shadow-md" onClick={() => navigate("/seller-dashboard")}>
                   {t.seller}
                 </button>
 
                 {isAdmin && (
-                  <button onClick={() => navigate("/admin-dashboard")}>
+                  <button  className="px-4 py-2 rounded-md bg-red-600 text-white font-semibold
+hover:bg-red-700 hover:scale-105 transition-all duration-200
+active:scale-95 shadow-md" onClick={() => navigate("/admin-dashboard")}>
                     {t.admin}
                   </button>
                 )}
@@ -873,7 +881,9 @@ export default function NavBar() {
                 </div>
               ) : (
                 <>
-                  <button
+                  <button  className="px-4 py-2 rounded-md bg-green-600 text-white font-semibold
+hover:bg-green-700 hover:scale-105 transition-all duration-200
+active:scale-95 shadow-md"
                     onClick={() => {
                       navigate("/my-orders");
                       setMenuOpen(false);
@@ -882,7 +892,9 @@ export default function NavBar() {
                     {t.myOrders}
                   </button>
 
-                  <button
+                  <button className="px-4 py-2 rounded-md bg-indigo-600 text-white font-semibold
+hover:bg-indigo-700 hover:scale-105 transition-all duration-200
+active:scale-95 shadow-md"
                     onClick={() => {
                       navigate("/seller-dashboard");
                       setMenuOpen(false);
@@ -892,7 +904,9 @@ export default function NavBar() {
                   </button>
 
                   {isAdmin && (
-                    <button
+                    <button className="px-4 py-2 rounded-md bg-red-600 text-white font-semibold
+hover:bg-red-700 hover:scale-105 transition-all duration-200
+active:scale-95 shadow-md"
                       onClick={() => {
                         navigate("/admin-dashboard");
                         setMenuOpen(false);
