@@ -65,7 +65,7 @@ export default function NotFound() {
           The page you are looking for doesn’t exist
         </p>
       </motion.div>
-      <Footer />
+      
     </div>
   );
 }
