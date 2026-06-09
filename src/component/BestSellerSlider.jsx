@@ -73,7 +73,7 @@
 // }
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation } from "swiper/modules";
-
+import { useNavigate } from "react-router-dom";
 import "swiper/css";
 import "swiper/css/navigation";
 import "animate.css";
@@ -84,7 +84,7 @@ import { dictionary } from "../i18n/dictionary";
 export default function BestSellerSlider({ images }) {
   const lang = useLanguageStore((s) => s.lang);
   const t = dictionary[lang];
-
+const navigate = useNavigate();
   return (
     <div className="flex justify-center items-center w-full min-h-dvh md:h-dvh bg-[rgba(59,47,74,1)] animate__animated animate__fadeIn">
       <div className="flex flex-col gap-8 justify-center items-center text-center px-4 w-full">
@@ -138,7 +138,7 @@ export default function BestSellerSlider({ images }) {
         )}
 
         {/* BUTTON */}
-        <button className="bg-[rgba(217,23,108,1)] text-white px-8 py-3 rounded-2xl animate__animated animate__pulse hover:animate__pulse">
+        <button   onClick={() => navigate("/books")} className="bg-[rgba(217,23,108,1)] text-white px-8 py-3 rounded-2xl animate__animated animate__pulse hover:animate__pulse">
           {t.shopNow}
         </button>
 
