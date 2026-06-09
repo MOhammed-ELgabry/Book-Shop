@@ -847,6 +847,15 @@ active:scale-95 shadow-md" onClick={() => navigate("/admin-dashboard")}>
 
           {isLoggedIn && (
             <>
+               <div className="flex flex-col items-center border-b w-full pb-3 mb-2">
+      <p className="font-semibold">
+        {user?.firstName || user?.username}
+      </p>
+
+      <p className="text-sm text-gray-500">
+        {user?.email}
+      </p>
+    </div>
               {!isSeller ? (
                 <div className="flex gap-6 items-center">
                   <button
