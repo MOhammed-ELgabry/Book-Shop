@@ -97,7 +97,8 @@ export default function MyOrders() {
     { key: "rejected", label: "Rejected", icon: XCircle },
     { key: "revenue", label: "Revenue", icon: Banknote },
   ];
-
+ 
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-100">
       <NavBar />
@@ -207,7 +208,7 @@ export default function MyOrders() {
                 </div>
 
                 {/* ACTIONS */}
-                <div className="flex gap-2 mt-4">
+                {/* <div className="flex gap-2 mt-4">
 
                   {order?.orderStatus === "accepted" && (
                     <button
@@ -241,8 +242,58 @@ export default function MyOrders() {
                       </button>
                     </>
                   )}
-                </div>
+                </div> */}
+                  {/* ACTIONS */}
+<div className="flex gap-2 mt-4">
 
+  {order?.orderStatus === "accepted" && (
+    <button
+      onClick={() =>
+        updateOrderStatus(order?.documentId, "delivered")
+      }
+      className="px-4 py-2 bg-green-600 text-white rounded-lg"
+    >
+      Mark Delivered
+    </button>
+  )}
+
+  {/* PAYMENT STATUS */}
+  {order?.paymentStatus === "pending" &&
+    order?.orderStatus !== "rejected" && (
+      <>
+        <button
+          onClick={() =>
+            updatePaymentStatus(order?.documentId, "paid")
+          }
+          className="px-3 py-1 bg-green-600 text-white rounded-lg"
+        >
+          Paid
+        </button>
+
+        <button
+          onClick={() =>
+            updatePaymentStatus(order?.documentId, "failed")
+          }
+          className="px-3 py-1 bg-red-600 text-white rounded-lg"
+        >
+          Failed
+        </button>
+      </>
+    )}
+
+  {order?.paymentStatus === "paid" && (
+    <span className="px-3 py-1 rounded-lg bg-green-100 text-green-700 font-semibold">
+      Payment Paid
+    </span>
+  )}
+
+  {order?.paymentStatus === "failed" && (
+    <span className="px-3 py-1 rounded-lg bg-red-100 text-red-700 font-semibold">
+      Payment Failed
+    </span>
+  )}
+
+</div>
               </div>
             ))}
           </div>

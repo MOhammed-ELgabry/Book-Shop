@@ -192,7 +192,7 @@ export default function SellerDashboard() {
                 </div>
 
                 <div className="mt-4 flex gap-2">
-                  {order?.orderStatus === "pending" && (
+                  {/* {order?.orderStatus === "pending" && (
                     <button
                       onClick={() =>
                         handleStatusChange(order?.documentId, "accepted")
@@ -201,7 +201,29 @@ export default function SellerDashboard() {
                     >
                       Accept
                     </button>
-                  )}
+                  )} */}
+
+                  {order?.orderStatus === "pending" && (
+  <>
+    <button
+      onClick={() =>
+        handleStatusChange(order?.documentId, "accepted")
+      }
+      className="px-4 py-2 bg-blue-600 text-white rounded-lg"
+    >
+      Accept
+    </button>
+
+    <button
+      onClick={() =>
+        handleStatusChange(order?.documentId, "rejected")
+      }
+      className="px-4 py-2 bg-red-600 text-white rounded-lg"
+    >
+      Reject
+    </button>
+  </>
+)}
 
                   {order?.orderStatus === "accepted" && (
                     <button
