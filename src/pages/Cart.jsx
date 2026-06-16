@@ -62,8 +62,8 @@ export default function Cart() {
     setOrdersLoading(true);
     try {
       const res = await api.get(
-        `/orders?filters[users_permissions_user][id][$eq]=${user.id}&populate[items][populate]=book&populate=seller&populate=paymentProof`
-      );
+  `/orders?filters[users_permissions_user][id][$eq]=${user.id}&populate[items][populate]=book&populate[seller][populate]=*&populate=paymentProof`
+);
       setOrders(res?.data?.data || []);
     } catch (err) {
       Swal.fire({ icon: "error", title: "Failed to load orders" });
