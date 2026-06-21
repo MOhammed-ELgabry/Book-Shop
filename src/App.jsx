@@ -23,6 +23,7 @@ import ProfilePage from "./pages/ProfilePage";
 import SellerDashboard from "./pages/SellerDashboard";
 import MyOrders from "./pages/MyOrders";
 import AdminDashboard from "./pages/AdminDashboard";
+import PaymentSuccess from "./pages/PaymentSuccess";
 
 // Store
 import { useAuthStore } from "./store/auth";
@@ -64,6 +65,10 @@ function AppContent() {
 
       {/* HOME */}
       <Route path="/" element={<HomeBefore />} />
+      <Route
+  path="/payment-success"
+  element={<PaymentSuccess />}
+/>
 <Route path="*" element={<NotFound />} />
       {/* AUTH */}
       <Route element={<PublicLayout />}>
