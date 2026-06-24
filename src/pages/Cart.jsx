@@ -283,6 +283,7 @@
 //   );
 // }
 
+
 import { useEffect, useState } from "react";
 import { useCartStore } from "../store/CartStore";
 import { useAuthStore } from "../store/auth";
@@ -328,22 +329,28 @@ export default function Cart() {
     cvv: "",
   });
 
+  // ================= INIT =================
   useEffect(() => {
     if (!user?.id) return;
+
     const loadData = async () => {
       await initCart(user);
       await fetchOrders();
     };
+
     loadData();
   }, [user?.id]);
 
+  // ================= ORDERS =================
   const fetchOrders = async () => {
     if (!user?.id) return;
+
     setOrdersLoading(true);
     try {
       const res = await api.get(
-        `/orders?filters[users_permissions_user][id][$eq]=${user.id}&populate[items][populate]=book&populate[seller][populate]=*&populate=paymentProof`
+        `/orders?filters[users_permissions_user][id][$eq]=${user.id}&populate[items][populate]=book&populate=seller&populate=paymentProof`
       );
+
       setOrders(res?.data?.data || []);
     } catch {
       Swal.fire({ icon: "error", title: "Failed to load orders" });
@@ -352,6 +359,7 @@ export default function Cart() {
     }
   };
 
+  // ================= TOTAL =================
   const subtotal = cart.reduce((acc, i) => {
     const price = Number(i.price) || 0;
     return acc + price * i.quantity;
@@ -360,6 +368,7 @@ export default function Cart() {
   const shipping = cart.length ? 10 : 0;
   const total = subtotal + shipping;
 
+  // ================= INPUT =================
   const handleChange = (e) => {
     setCheckoutData((prev) => ({
       ...prev,
@@ -367,11 +376,12 @@ export default function Cart() {
     }));
   };
 
+  // ================= CHECKOUT =================
   const handleCheckout = async () => {
     if (!user?.id) return;
 
     if (!checkoutData.address || !checkoutData.phone) {
-      Swal.fire({ icon: "warning", title: "Missing Data" });
+      Swal.fire({ icon: "warning", title: "Missing address or phone" });
       return;
     }
 
@@ -390,23 +400,22 @@ export default function Cart() {
 
       // ================= VISA =================
       if (paymentMethod === "visa") {
-        localStorage.setItem(
-          "pendingOrder",
-          JSON.stringify({
-            userId: user.id,
-            items: orderItems,
-            total,
-            address: checkoutData.address,
-            phone: checkoutData.phone,
-          })
-        );
+        const res = await api.post("/orders/create-checkout-session", {
+          cartItems: orderItems,
+          total,
+          address: checkoutData.address,
+          phone: checkoutData.phone,
+        });
 
-        const res = await api.get("/orders/create-checkout-session");
+        if (!res.data?.checkoutUrl) {
+          throw new Error("No checkout URL returned");
+        }
+
         window.location.href = res.data.checkoutUrl;
         return;
       }
 
-      // ================= WALLET / CASH =================
+      // ================= CASH / WALLET =================
       let uploadedImageId = null;
 
       if (paymentProof) {
@@ -417,7 +426,7 @@ export default function Cart() {
         uploadedImageId = uploadRes.data?.[0]?.id;
       }
 
-      const payload = {
+      await api.post("/orders", {
         data: {
           users_permissions_user: user.id,
           items: orderItems,
@@ -429,15 +438,17 @@ export default function Cart() {
           paymentProof: uploadedImageId,
           orderStatus: "pending",
         },
-      };
+      });
 
-      await api.post("/orders", payload);
       await clearCart(user);
 
       Swal.fire({
         icon: "success",
         title: "Order placed successfully 🎉",
       });
+
+      setShowCheckoutModal(false);
+      setPaymentProof(null);
 
       setCheckoutData({
         address: "",
@@ -449,11 +460,9 @@ export default function Cart() {
         cvv: "",
       });
 
-      setPaymentProof(null);
-      setShowCheckoutModal(false);
       await fetchOrders();
     } catch (err) {
-      Swal.fire({ icon: "error", title: "Failed to place order" });
+      Swal.fire({ icon: "error", title: "Checkout failed" });
     } finally {
       setCheckoutLoading(false);
     }
@@ -473,6 +482,7 @@ export default function Cart() {
       <div className="max-w-7xl mx-auto px-6 py-10">
         <div className="flex justify-between mb-8">
           <h1 className="text-3xl font-bold">Shopping Cart</h1>
+
           <button
             onClick={() => setShowOrdersModal(true)}
             className="bg-black text-white px-5 py-3 rounded-xl"

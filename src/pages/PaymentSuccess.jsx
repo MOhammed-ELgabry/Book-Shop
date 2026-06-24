@@ -1,80 +1,105 @@
-import { useEffect, useRef } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
-import api from "../api/api";
-import { useCartStore } from "../store/CartStore";
-import { useAuthStore } from "../store/auth";
+// import { useEffect } from "react";
+// import { useNavigate } from "react-router-dom";
+// import Swal from "sweetalert2";
+// import { useAuthStore } from "../store/auth";
+// import { useCartStore } from "../store/CartStore";
+
+// export default function PaymentSuccess() {
+//   const navigate = useNavigate();
+
+//   const user = useAuthStore((s) => s.user);
+//   const clearCart = useCartStore((s) => s.clearCart);
+
+// useEffect(() => {
+//   const completePayment = async () => {
+//     if (user) {
+//       await clearCart(user);
+//     }
+
+//     Swal.fire({
+//       icon: "success",
+//       title: "Payment Successful 🎉",
+//       text: "Your order is being processed",
+//       timer: 2000,
+//       showConfirmButton: false,
+//     });
+
+//     setTimeout(() => {
+//       navigate("/cart", { replace: true });
+//     }, 2000);
+//   };
+
+//   completePayment();
+// }, [navigate, user, clearCart]);
+
+//   return (
+//     <div className="min-h-screen flex items-center justify-center">
+//       <h1 className="text-4xl font-bold text-green-600">
+//         Payment Successful 🎉
+//       </h1>
+//     </div>
+//   );
+// }
+
+import { useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Swal from "sweetalert2";
+import { useAuthStore } from "../store/auth";
+import { useCartStore } from "../store/CartStore";
+import api from "../api/api"; // عدل المسار لو ملف api عندك في مكان مختلف
 
 export default function PaymentSuccess() {
-  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
-  const { cart, clearCart } = useCartStore();
   const user = useAuthStore((s) => s.user);
-
-  const sessionId = searchParams.get("session_id");
-
-  // 👇 مهم جدًا لمنع تكرار إنشاء الطلب
-  const hasRun = useRef(false);
+  const clearCart = useCartStore((s) => s.clearCart);
 
   useEffect(() => {
-    const createOrderAfterPayment = async () => {
-      if (!user?.id || !sessionId) return;
-      if (hasRun.current) return;
-
-      hasRun.current = true;
-
+    const completePayment = async () => {
       try {
-        const saved = localStorage.getItem("pendingOrder");
-        const orderData = JSON.parse(saved);
-const orderItems = orderData?.items?.map((item) => ({
-  quantity: item.quantity,
-  book: item.book?.id || item.bookId,
-}));
-        const payload = {
-          data: {
-            users_permissions_user: user.id,
-            items: orderItems,
-            total: orderData.total,
-            address: orderData.address,
-            phone: orderData.phone,
+        const sessionId = searchParams.get("session_id");
 
-            paymentMethod: "visa",
-            paymentStatus: "paid",   // ✅ هنا التغيير المهم
-            orderStatus: "confirmed",
-          },
-        };
-console.log("ORDER PAYLOAD:", payload);
-        await api.post("/orders", payload);
+        if (!sessionId) {
+          throw new Error("Session ID not found");
+        }
 
-        await clearCart(user);
+        await api.post("/orders/confirm-payment", {
+          sessionId,
+        });
 
-        localStorage.removeItem("pendingOrder");
+        if (user) {
+          await clearCart(user);
+        }
 
         Swal.fire({
           icon: "success",
           title: "Payment Successful 🎉",
+          text: "Your order is being processed",
+          timer: 2000,
+          showConfirmButton: false,
         });
 
-        // ⬅️ يرجع للكارت بعد 2 ثانية
         setTimeout(() => {
           navigate("/cart", { replace: true });
-        }, 1500);
-
+        }, 2000);
       } catch (err) {
+        console.log(err);
+
         Swal.fire({
           icon: "error",
-          title: "Order creation failed",
+          title: "Payment Error",
+          text: "Could not confirm payment",
         });
       }
     };
 
-    createOrderAfterPayment();
-  }, [sessionId, user]);
+    completePayment();
+  }, [navigate, user, clearCart, searchParams]);
 
   return (
     <div className="min-h-screen flex items-center justify-center">
-      <h1 className="text-4xl font-bold">
+      <h1 className="text-4xl font-bold text-green-600">
         Payment Successful 🎉
       </h1>
     </div>
