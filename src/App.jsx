@@ -65,9 +65,13 @@ function AppContent() {
 
       {/* HOME */}
       <Route path="/" element={<HomeBefore />} />
-      <Route
+  <Route
   path="/payment-success"
-  element={<PaymentSuccess />}
+  element={
+    <ProtectedRoute>
+      <PaymentSuccess />
+    </ProtectedRoute>
+  }
 />
 <Route path="*" element={<NotFound />} />
       {/* AUTH */}

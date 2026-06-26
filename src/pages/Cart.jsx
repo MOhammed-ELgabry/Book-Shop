@@ -93,116 +93,116 @@ export default function Cart() {
   };
 
   // ================= CHECKOUT =================
-  const handleCheckout = async () => {
-    if (!user?.id) return;
+ const handleCheckout = async () => {
+  if (!user?.id) return;
 
-    if (!checkoutData.address || !checkoutData.phone) {
-      Swal.fire({ icon: "warning", title: "Missing address or phone" });
-      return;
-    }
-
-    if (!paymentMethod) {
-      Swal.fire({ icon: "warning", title: "Choose payment method" });
-      return;
-    }
-if (paymentMethod === "visa") {
-  const res = await api.post("/orders/create-checkout-session", {
-    cartItems: orderItems,
-    total,
-    address: checkoutData.address,
-    phone: checkoutData.phone,
-
-    // NEW
-    cardName: checkoutData.cardName,
-    cardNumber: checkoutData.cardNumber,
-    expiry: checkoutData.expiry,
-    cvv: checkoutData.cvv,
-  });
-
-  if (!res.data?.checkoutUrl) {
-    throw new Error("No checkout URL returned");
+  if (!checkoutData.address || !checkoutData.phone) {
+    Swal.fire({
+      icon: "warning",
+      title: "Missing address or phone",
+    });
+    return;
   }
 
-  window.location.href = res.data.checkoutUrl;
-  return;
-}
-    setCheckoutLoading(true);
+  if (!paymentMethod) {
+    Swal.fire({
+      icon: "warning",
+      title: "Choose payment method",
+    });
+    return;
+  }
 
-    try {
-      const orderItems = cart.map((item) => ({
-        quantity: item.quantity,
-        book: item.bookId,
-      }));
+  setCheckoutLoading(true);
 
-      // ================= VISA =================
-      if (paymentMethod === "visa") {
-        const res = await api.post("/orders/create-checkout-session", {
-          cartItems: orderItems,
-          total,
-          address: checkoutData.address,
-          phone: checkoutData.phone,
-        });
+  try {
+    const orderItems = cart.map((item) => ({
+      quantity: item.quantity,
+      book: item.bookId,
+    }));
 
-        if (!res.data?.checkoutUrl) {
-          throw new Error("No checkout URL returned");
-        }
+    // ================= VISA =================
+    if (paymentMethod === "visa") {
+      const res = await api.post("/orders/create-checkout-session", {
+        cartItems: orderItems,
+        total,
+        address: checkoutData.address,
+        phone: checkoutData.phone,
 
-        window.location.href = res.data.checkoutUrl;
-        return;
+        cardName: checkoutData.cardName,
+        cardNumber: checkoutData.cardNumber,
+        expiry: checkoutData.expiry,
+        cvv: checkoutData.cvv,
+      });
+
+      if (!res.data?.checkoutUrl) {
+        throw new Error("No checkout URL returned");
       }
 
-      // ================= CASH / WALLET =================
-      let uploadedImageId = null;
-
-      if (paymentProof) {
-        const formData = new FormData();
-        formData.append("files", paymentProof);
-
-        const uploadRes = await api.post("/upload", formData);
-        uploadedImageId = uploadRes.data?.[0]?.id;
-      }
-
-      await api.post("/orders", {
-        data: {
-          users_permissions_user: user.id,
-          items: orderItems,
-          total,
-          address: checkoutData.address,
-          phone: checkoutData.phone,
-          paymentMethod,
-          paymentStatus: "pending",
-          paymentProof: uploadedImageId,
-          orderStatus: "pending",
-        },
-      });
-
-      await clearCart(user);
-
-      Swal.fire({
-        icon: "success",
-        title: "Order placed successfully 🎉",
-      });
-
-      setShowCheckoutModal(false);
-      setPaymentProof(null);
-
-      setCheckoutData({
-        address: "",
-        phone: "",
-        walletType: "",
-        cardName: "",
-        cardNumber: "",
-        expiry: "",
-        cvv: "",
-      });
-
-      await fetchOrders();
-    } catch (err) {
-      Swal.fire({ icon: "error", title: "Checkout failed" });
-    } finally {
-      setCheckoutLoading(false);
+      window.location.href = res.data.checkoutUrl;
+      return;
     }
-  };
+
+    // ================= CASH / WALLET =================
+    let uploadedImageId = null;
+
+    if (paymentProof) {
+      const formData = new FormData();
+      formData.append("files", paymentProof);
+
+      const uploadRes = await api.post("/upload", formData);
+      uploadedImageId = uploadRes.data?.[0]?.id;
+    }
+
+    await api.post("/orders", {
+      data: {
+        users_permissions_user: user.id,
+        items: orderItems,
+        total,
+        address: checkoutData.address,
+        phone: checkoutData.phone,
+        paymentMethod,
+        paymentStatus: "pending",
+        paymentProof: uploadedImageId,
+        orderStatus: "pending",
+      },
+    });
+
+    await clearCart(user);
+
+    Swal.fire({
+      icon: "success",
+      title: "Order placed successfully 🎉",
+    });
+
+    setShowCheckoutModal(false);
+    setPaymentProof(null);
+
+    setCheckoutData({
+      address: "",
+      phone: "",
+      walletType: "",
+      cardName: "",
+      cardNumber: "",
+      expiry: "",
+      cvv: "",
+    });
+
+    await fetchOrders();
+  } catch (err) {
+    console.log(err);
+
+    Swal.fire({
+      icon: "error",
+      title: "Checkout failed",
+      text:
+        err.response?.data?.error?.message ||
+        err.response?.data?.message ||
+        err.message,
+    });
+  } finally {
+    setCheckoutLoading(false);
+  }
+};
 
   if (loading) return <CartPageSkeleton />;
 
