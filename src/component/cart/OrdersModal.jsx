@@ -38,7 +38,8 @@ export default function OrdersModal({ show, onClose, orders, ordersLoading }) {
           <div className="flex flex-col gap-6">
             
             {orders.map((order) => {
-
+console.log(order);
+console.log("SELLER =>", order.seller);
               const sellerName =
                 order?.seller?.username ||
                 order?.seller?.name ||
