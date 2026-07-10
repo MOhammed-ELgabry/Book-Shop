@@ -85,17 +85,17 @@ export default function LoveBooks() {
         loveBooks.map((book) => (
           <div
             key={book.id}
-            className="flex flex-col md:flex-row gap-4 items-center p-4 border rounded shadow-sm"
+            className="flex w-full min-w-0 flex-col md:flex-row gap-4 items-center p-4 border rounded-2xl shadow-sm"
           >
             {/* صورة الكتاب */}
             <img
               src={getStrapiMedia(book.img)}
               alt={book.name}
-              className="w-32 h-44 object-cover rounded-lg"
+              className="w-32 h-44 shrink-0 object-cover rounded-lg"
             />
 
             {/* بيانات الكتاب */}
-            <div className="flex-1 flex flex-col gap-1">
+            <div className="flex-1 min-w-0 flex flex-col gap-1">
               <h2 className="text-lg font-semibold">
                 {book.name}
               </h2>
@@ -116,7 +116,7 @@ export default function LoveBooks() {
             {/* زرار إزالة */}
             <button
               onClick={() => removeBook(book.id)}
-              className="text-red-500 border border-red-500 px-4 py-2 rounded hover:bg-red-50"
+              className="shrink-0 text-red-500 border border-red-500 px-4 py-2 rounded hover:bg-red-50"
             >
               Remove
             </button>
