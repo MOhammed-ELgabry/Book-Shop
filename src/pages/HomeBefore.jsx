@@ -103,31 +103,47 @@ export default function HomeBefore() {
       : [];
 
   return (
-    <div>
+    <div className="bg-slate-50 text-slate-900">
       <NavBar />
 
       {/* HERO */}
       <div
-        className="w-full h-dvh bg-cover bg-center"
+        className="relative w-full min-h-[680px] bg-cover bg-center"
         style={{ backgroundImage: `url(${bgImage})` }}
       >
-        <div className="w-full h-full bg-black/30 flex items-center justify-center">
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/35 to-slate-950/70" />
+        <div className="relative z-10 flex min-h-[680px] w-full items-center justify-center px-4 pt-24 text-center">
+          <div className="flex w-full max-w-3xl flex-col items-center gap-7">
+            <p className="rounded-full border border-white/25 bg-white/10 px-4 py-2 text-sm font-semibold uppercase tracking-[0.18em] text-white/90 backdrop-blur">
+              {lang === "en" ? "Curated Book Shop" : "Ù…ØªØ¬Ø± ÙƒØªØ¨ Ù…Ù…ÙŠØ²"}
+            </p>
+
+            <div className="space-y-4">
+              <h1 className="text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl">
+                {lang === "en" ? "Find your next favorite book" : "Ø§ÙƒØªØ´Ù ÙƒØªØ§Ø¨Ùƒ Ø§Ù„Ù…ÙØ¶Ù„ Ø§Ù„ØªØ§Ù„ÙŠ"}
+              </h1>
+              <p className="mx-auto max-w-2xl text-base leading-7 text-white/85 sm:text-lg">
+                {lang === "en"
+                  ? "Browse best sellers, recommended reads, and limited offers in one refined shopping experience."
+                  : "ØªØµÙØ­ Ø§Ù„Ø£ÙƒØ«Ø± Ù…Ø¨ÙŠØ¹Ù‹Ø§ ÙˆØ§Ù„ØªØ±Ø´ÙŠØ­Ø§Øª ÙˆØ§Ù„Ø¹Ø±ÙˆØ¶ ÙÙŠ ØªØ¬Ø±Ø¨Ø© ØªØ³ÙˆÙ‚ Ù…Ù…ÙŠØ²Ø©."}
+              </p>
+            </div>
 
           {/* SEARCH */}
           <Formik
             initialValues={{ search: "" }}
             onSubmit={(values) => {}}
           >
-            <Form className="relative w-full max-w-md">
+            <Form className="relative w-full max-w-xl rounded-full bg-white p-2 shadow-2xl shadow-black/20">
               <Field
                 name="search"
                 placeholder={t.searchPlaceholder}
-                className="input w-full pr-12 bg-white rounded-full border border-gray-300 h-12 px-4 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                className="h-12 w-full rounded-full border border-transparent bg-white px-5 pr-14 text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-pink-200 focus:ring-4 focus:ring-pink-100"
               />
 
-              <div className="absolute right-0 top-0 h-full flex items-center justify-center pr-2">
+              <div className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center justify-center">
                 <div
-                  className="flex items-center justify-center h-10 w-10 rounded-e-full"
+                  className="flex h-11 w-11 items-center justify-center rounded-full shadow-lg shadow-pink-900/20 transition hover:scale-105"
                   style={{ background: "rgba(217, 23, 108, 1)" }}
                 >
                   <AiOutlineSearch className="text-white text-lg" />
@@ -136,20 +152,23 @@ export default function HomeBefore() {
             </Form>
           </Formik>
 
+          </div>
         </div>
       </div>
 
-      {/* SERVICES */}
-      <ServicesGrid services={useServices} />
+      <main className="flex flex-col gap-16 py-14 sm:gap-20 sm:py-20">
+        {/* SERVICES */}
+        <ServicesGrid services={useServices} />
 
-      {/* BEST SELLER */}
-      <BestSellerSlider images={images} />
+        {/* BEST SELLER */}
+        <BestSellerSlider images={images} />
 
-      {/* RECOMMENDED */}
-      <Recommended recommended={recommended} />
+        {/* RECOMMENDED */}
+        <Recommended recommended={recommended} />
 
-      {/* FLASH SALE */}
-      <FlashSale FlashSale={FlashSale} />
+        {/* FLASH SALE */}
+        <FlashSale FlashSale={FlashSale} />
+      </main>
 
       {/* FOOTER */}
       <Footer />

@@ -3,20 +3,20 @@ import "animate.css";
 
 export default function ServicesGrid({ services }) {
   return (
-    <div className="max-w-7xl mx-auto mt-10 px-5">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <section className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
 
         {services.map((el, index) => (
           <div
             key={el.documentId}
-            className="flex flex-col gap-2 shadow-2xl p-6 rounded-lg bg-white animate__animated animate__fadeInUp"
+            className="group flex min-w-0 flex-col gap-3 rounded-2xl border border-slate-100 bg-white p-6 shadow-lg shadow-slate-200/70 transition duration-300 hover:-translate-y-1 hover:shadow-xl animate__animated animate__fadeInUp"
             data-delay={`${0.2 * index}s`}
           >
 
             {/* IMAGE */}
             {el.image?.url && (
               <img
-                className="w-[60px] h-[60px] object-cover rounded-full animate__animated animate__zoomIn"
+                className="h-14 w-14 rounded-2xl object-cover ring-4 ring-pink-50 transition duration-300 group-hover:scale-105 animate__animated animate__zoomIn"
                 src={
                   el.image.url?.startsWith("http")
                     ? el.image.url
@@ -27,12 +27,12 @@ export default function ServicesGrid({ services }) {
             )}
 
             {/* TITLE */}
-            <h2 className="font-bold text-lg animate__animated animate__fadeInUp">
+            <h2 className="text-lg font-bold text-slate-900 animate__animated animate__fadeInUp">
               {el.h2}
             </h2>
 
             {/* DESCRIPTION */}
-            <p className="text-gray-600 animate__animated animate__fadeIn">
+            <p className="text-sm leading-6 text-slate-600 animate__animated animate__fadeIn">
               {el.paragraph}
             </p>
 
@@ -40,6 +40,6 @@ export default function ServicesGrid({ services }) {
         ))}
 
       </div>
-    </div>
+    </section>
   );
 }
