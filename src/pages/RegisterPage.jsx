@@ -1,4 +1,3 @@
-
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
@@ -145,102 +144,144 @@ const handleGoogleLogin = async () => {
   if (loading) return <RegisterSkeleton />;
 
   return (
-    <div className="min-h-screen flex justify-center items-center bg-gray-50 p-4">
-      <div className="w-full max-w-md bg-white p-6 rounded-xl shadow-md flex flex-col gap-6">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-rose-50 via-white to-slate-100 px-4 py-10">
+      <div className="w-full max-w-lg rounded-2xl border border-white/70 bg-white/95 p-6 shadow-xl shadow-slate-200/70 sm:p-8">
+        <div className="mb-8 text-center">
+          <p className="mb-2 text-sm font-medium text-pink-600">
+            {lang === "en" ? "Join Book Shop" : "انضم إلى متجر الكتب"}
+          </p>
+          <h2 className="text-3xl font-bold tracking-tight text-slate-900">
+            {lang === "en" ? "Create Account" : "إنشاء حساب"}
+          </h2>
+        </div>
 
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
           onSubmit={registerSubmit}
         >
-          {() => (
-            <Form className="flex flex-col gap-6">
-
-              {/* FIRST + LAST NAME */}
-              <div className="flex flex-col sm:flex-row gap-4">
-
-                <div className="flex flex-col gap-2 flex-1">
-                  <Field name="firstName" placeholder={lang === "en" ? "First Name" : "الاسم الأول"} />
-                  <ErrorMessage name="firstName" component="p" className="text-red-600 text-sm" />
+          {({ isSubmitting }) => (
+            <Form className="flex flex-col gap-5">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm font-semibold text-slate-700">
+                    {lang === "en" ? "First Name" : "الاسم الأول"}
+                  </label>
+                  <Field
+                    name="firstName"
+                    placeholder={lang === "en" ? "First Name" : "الاسم الأول"}
+                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-pink-500 focus:ring-4 focus:ring-pink-100"
+                  />
+                  <ErrorMessage name="firstName" component="p" className="rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-600" />
                 </div>
 
-                <div className="flex flex-col gap-2 flex-1">
-                  <Field name="lastName" placeholder={lang === "en" ? "Last Name" : "الاسم الأخير"} />
-                  <ErrorMessage name="lastName" component="p" className="text-red-600 text-sm" />
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm font-semibold text-slate-700">
+                    {lang === "en" ? "Last Name" : "الاسم الأخير"}
+                  </label>
+                  <Field
+                    name="lastName"
+                    placeholder={lang === "en" ? "Last Name" : "الاسم الأخير"}
+                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-pink-500 focus:ring-4 focus:ring-pink-100"
+                  />
+                  <ErrorMessage name="lastName" component="p" className="rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-600" />
                 </div>
               </div>
 
-              {/* EMAIL */}
               <div className="flex flex-col gap-2">
+                <label className="text-sm font-semibold text-slate-700">
+                  {lang === "en" ? "Email" : "البريد الإلكتروني"}
+                </label>
                 <Field
                   type="email"
                   name="email"
                   placeholder={lang === "en" ? "Email" : "البريد الإلكتروني"}
+                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-pink-500 focus:ring-4 focus:ring-pink-100"
                 />
-                <ErrorMessage name="email" component="p" className="text-red-600 text-sm" />
+                <ErrorMessage name="email" component="p" className="rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-600" />
               </div>
 
-              {/* PASSWORD */}
-              <div className="flex flex-col gap-2 relative">
-                <Field
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  placeholder={lang === "en" ? "Password" : "كلمة المرور"}
-                />
-
-                <span
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-10 cursor-pointer"
-                >
-                  {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
-                </span>
-
-                <ErrorMessage name="password" component="p" className="text-red-600 text-sm" />
-              </div>
-
-              {/* CONFIRM PASSWORD */}
               <div className="flex flex-col gap-2">
+                <label className="text-sm font-semibold text-slate-700">
+                  {lang === "en" ? "Password" : "كلمة المرور"}
+                </label>
+                <div className="relative">
+                  <Field
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    placeholder={lang === "en" ? "Password" : "كلمة المرور"}
+                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 pr-12 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-pink-500 focus:ring-4 focus:ring-pink-100"
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-lg text-xl text-slate-500 transition hover:bg-slate-100 hover:text-slate-800 focus:outline-none focus:ring-2 focus:ring-pink-300"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+                  </button>
+                </div>
+
+                <ErrorMessage name="password" component="p" className="rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-600" />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-semibold text-slate-700">
+                  {lang === "en" ? "Confirm Password" : "تأكيد كلمة المرور"}
+                </label>
                 <Field
                   type={showPassword ? "text" : "password"}
                   name="confirmPassword"
                   placeholder={lang === "en" ? "Confirm Password" : "تأكيد كلمة المرور"}
+                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-pink-500 focus:ring-4 focus:ring-pink-100"
                 />
-                <ErrorMessage name="confirmPassword" component="p" className="text-red-600 text-sm" />
+                <ErrorMessage name="confirmPassword" component="p" className="rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-600" />
               </div>
 
-              {/* TERMS */}
-              <div className="flex items-center gap-2">
-                <Field type="checkbox" name="agree" />
-                <label>
-                  {lang === "en" ? "Agree with Terms" : "الموافقة على الشروط"}
+              <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+                <label className="flex items-center gap-3 text-sm font-medium text-slate-700">
+                  <Field
+                    type="checkbox"
+                    name="agree"
+                    className="h-4 w-4 rounded border-slate-300 text-pink-600 focus:ring-pink-500"
+                  />
+                  <span>
+                    {lang === "en" ? "Agree with Terms" : "الموافقة على الشروط"}
+                  </span>
                 </label>
+                <ErrorMessage name="agree" component="p" className="mt-2 rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-600" />
               </div>
 
-              {/* REGISTER BUTTON */}
-              <button type="submit" className="bg-pink-600 text-white py-2 rounded-xl">
-                {lang === "en" ? "Sign Up" : "إنشاء حساب"}
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="mt-1 rounded-xl bg-pink-600 px-5 py-3 font-semibold text-white shadow-lg shadow-pink-200 transition hover:bg-pink-700 focus:outline-none focus:ring-4 focus:ring-pink-200 disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                {isSubmitting
+                  ? lang === "en"
+                    ? "Creating account..."
+                    : "جاري إنشاء الحساب..."
+                  : lang === "en" ? "Sign Up" : "إنشاء حساب"}
               </button>
 
-              {/* LOGIN */}
-              <p className="text-center text-sm">
+              <p className="text-center text-sm text-slate-600">
                 {lang === "en" ? "Already have an account?" : "عندك حساب؟"}{" "}
-                <span onClick={() => navigate("/login")} className="text-blue-500 underline cursor-pointer">
+                <span onClick={() => navigate("/login")} className="cursor-pointer font-semibold text-pink-600 underline-offset-4 hover:underline">
                   {lang === "en" ? "Login" : "تسجيل دخول"}
                 </span>
               </p>
 
-              {/* GOOGLE */}
               <button
                 type="button"
                 onClick={handleGoogleLogin}
-                className="w-full flex items-center justify-center gap-3 border border-gray-300 py-2 rounded-xl"
+                className="w-full flex items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white px-5 py-3 font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus:ring-4 focus:ring-slate-100"
               >
                 <FcGoogle size={22} />
                 <span>
                   {lang === "en" ? "Continue with Google" : "المتابعة بجوجل"}
                 </span>
               </button>
-
             </Form>
           )}
         </Formik>

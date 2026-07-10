@@ -1,4 +1,3 @@
-
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
@@ -131,78 +130,90 @@ export default function LoginPage() {
   if (loading) return <LoginSkeleton />;
 
   return (
-    <div className="min-h-screen flex justify-center items-center bg-gray-50 p-4">
-      <div className="w-full max-w-md bg-white p-6 rounded-xl shadow-md flex flex-col gap-6">
-
-        <h2 className="text-center text-pink-600 text-2xl font-semibold">
-          {lang === "en" ? "Welcome Back" : "مرحبًا بعودتك"}
-        </h2>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-rose-50 via-white to-slate-100 px-4 py-10">
+      <div className="w-full max-w-md rounded-2xl border border-white/70 bg-white/95 p-6 shadow-xl shadow-slate-200/70 sm:p-8">
+        <div className="mb-8 text-center">
+          <p className="mb-2 text-sm font-medium text-pink-600">
+            {lang === "en" ? "Book Shop Account" : "حساب متجر الكتب"}
+          </p>
+          <h2 className="text-3xl font-bold tracking-tight text-slate-900">
+            {lang === "en" ? "Welcome Back" : "مرحبًا بعودتك"}
+          </h2>
+        </div>
 
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
           onSubmit={loginSubmit}
         >
-          {() => (
-            <Form className="flex flex-col gap-6">
-
-              {/* EMAIL */}
+          {({ isSubmitting }) => (
+            <Form className="flex flex-col gap-5">
               <div className="flex flex-col gap-2">
-                <label>{lang === "en" ? "Email" : "البريد الإلكتروني"}</label>
+                <label className="text-sm font-semibold text-slate-700">
+                  {lang === "en" ? "Email" : "البريد الإلكتروني"}
+                </label>
 
                 <Field
                   name="identifier"
-                  className="input input-bordered w-full p-2 border rounded"
+                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-pink-500 focus:ring-4 focus:ring-pink-100"
                 />
 
                 <ErrorMessage
                   name="identifier"
                   component="p"
-                  className="text-red-600 text-sm"
+                  className="rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-600"
                 />
               </div>
 
-              {/* PASSWORD */}
-              <div className="flex flex-col gap-2 relative">
-                <label>{lang === "en" ? "Password" : "كلمة المرور"}</label>
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-semibold text-slate-700">
+                  {lang === "en" ? "Password" : "كلمة المرور"}
+                </label>
 
-                <Field
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  className="input input-bordered w-full p-2 border rounded pr-10"
-                />
+                <div className="relative">
+                  <Field
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 pr-12 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-pink-500 focus:ring-4 focus:ring-pink-100"
+                  />
 
-                <span
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-10 cursor-pointer text-xl"
-                >
-                  {showPassword ? (
-                    <AiOutlineEyeInvisible />
-                  ) : (
-                    <AiOutlineEye />
-                  )}
-                </span>
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-lg text-xl text-slate-500 transition hover:bg-slate-100 hover:text-slate-800 focus:outline-none focus:ring-2 focus:ring-pink-300"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? (
+                      <AiOutlineEyeInvisible />
+                    ) : (
+                      <AiOutlineEye />
+                    )}
+                  </button>
+                </div>
 
                 <ErrorMessage
                   name="password"
                   component="p"
-                  className="text-red-600 text-sm"
+                  className="rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-600"
                 />
               </div>
 
-              {/* LOGIN */}
               <button
                 type="submit"
-                className="bg-pink-600 text-white py-2 rounded-xl"
+                disabled={isSubmitting}
+                className="mt-1 rounded-xl bg-pink-600 px-5 py-3 font-semibold text-white shadow-lg shadow-pink-200 transition hover:bg-pink-700 focus:outline-none focus:ring-4 focus:ring-pink-200 disabled:cursor-not-allowed disabled:opacity-70"
               >
-                {lang === "en" ? "Login" : "تسجيل الدخول"}
+                {isSubmitting
+                  ? lang === "en"
+                    ? "Logging in..."
+                    : "جاري تسجيل الدخول..."
+                  : lang === "en" ? "Login" : "تسجيل الدخول"}
               </button>
 
-              {/* GOOGLE */}
               <button
                 type="button"
                 onClick={handleGoogleLogin}
-                className="w-full flex items-center justify-center gap-3 border py-2 rounded-xl"
+                className="w-full flex items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white px-5 py-3 font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus:ring-4 focus:ring-slate-100"
               >
                 <FcGoogle size={22} />
                 <span>
@@ -212,19 +223,17 @@ export default function LoginPage() {
                 </span>
               </button>
 
-              {/* REGISTER */}
-              <p className="text-center text-sm">
+              <p className="text-center text-sm text-slate-600">
                 {lang === "en"
                   ? "Don't have an account?"
                   : "ليس لديك حساب؟"}{" "}
                 <span
                   onClick={() => navigate("/register")}
-                  className="text-blue-500 underline cursor-pointer"
+                  className="cursor-pointer font-semibold text-pink-600 underline-offset-4 hover:underline"
                 >
                   {lang === "en" ? "Register" : "إنشاء حساب"}
                 </span>
               </p>
-
             </Form>
           )}
         </Formik>
