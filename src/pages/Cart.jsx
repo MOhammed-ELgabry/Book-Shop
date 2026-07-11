@@ -1,5 +1,3 @@
-
-
 import { useEffect, useState } from "react";
 import { useCartStore } from "../store/CartStore";
 import { useAuthStore } from "../store/auth";
@@ -100,117 +98,6 @@ const res = await api.get(
   };
 
   // ================= CHECKOUT =================
-//  const handleCheckout = async () => {
-//   if (!user?.id) return;
-
-//   if (!checkoutData.address || !checkoutData.phone) {
-//     Swal.fire({
-//       icon: "warning",
-//       title: "Missing address or phone",
-//     });
-//     return;
-//   }
-
-//   if (!paymentMethod) {
-//     Swal.fire({
-//       icon: "warning",
-//       title: "Choose payment method",
-//     });
-//     return;
-//   }
-
-//   setCheckoutLoading(true);
-
-//   try {
-//     const orderItems = cart.map((item) => ({
-//       quantity: item.quantity,
-//       book: item.bookId,
-//     }));
-
-//     // ================= VISA =================
-//     if (paymentMethod === "visa") {
-//       const res = await api.post("/orders/create-checkout-session", {
-//         cartItems: orderItems,
-//         total,
-//         address: checkoutData.address,
-//         phone: checkoutData.phone,
-
-//         cardName: checkoutData.cardName,
-//         cardNumber: checkoutData.cardNumber,
-//         expiry: checkoutData.expiry,
-//         cvv: checkoutData.cvv,
-//       });
-
-//       if (!res.data?.checkoutUrl) {
-//         throw new Error("No checkout URL returned");
-//       }
-
-//       window.location.href = res.data.checkoutUrl;
-//       return;
-//     }
-
-//     // ================= CASH / WALLET =================
-//     let uploadedImageId = null;
-
-//     if (paymentProof) {
-//       const formData = new FormData();
-//       formData.append("files", paymentProof);
-
-//       const uploadRes = await api.post("/upload", formData);
-//       uploadedImageId = uploadRes.data?.[0]?.id;
-//     }
-
-//     await api.post("/orders", {
-//       data: {
-//         users_permissions_user: user.id,
-//         items: orderItems,
-//         total,
-//         address: checkoutData.address,
-//         phone: checkoutData.phone,
-//         paymentMethod,
-//         paymentStatus: "pending",
-//         paymentProof: uploadedImageId,
-//         orderStatus: "pending",
-//       },
-//     });
-
-//     await clearCart(user);
-
-//     Swal.fire({
-//       icon: "success",
-//       title: "Order placed successfully 🎉",
-//     });
-
-//     setShowCheckoutModal(false);
-//     setPaymentProof(null);
-
-//     setCheckoutData({
-//       address: "",
-//       phone: "",
-//       walletType: "",
-//       cardName: "",
-//       cardNumber: "",
-//       expiry: "",
-//       cvv: "",
-//     });
-
-//     await fetchOrders();
-//   } catch (err) {
-//     console.log(err);
-
-//     Swal.fire({
-//       icon: "error",
-//       title: "Checkout failed",
-//       text:
-//         err.response?.data?.error?.message ||
-//         err.response?.data?.message ||
-//         err.message,
-//     });
-//   } finally {
-//     setCheckoutLoading(false);
-//   }
-// };
-
 const handleCheckout = async () => {
   if (!user?.id) return;
 
@@ -343,32 +230,49 @@ const handleCheckout = async () => {
   if (loading) return <CartPageSkeleton />;
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div className="bg-gray-50 min-h-screen font-sans text-gray-900">
       <NavBar />
 
       <div
-        className="w-full h-48 bg-cover bg-center"
+        className="w-full h-64 bg-cover bg-center relative"
         style={{ backgroundImage: `url(${bgImage})` }}
-      />
+      >
+        <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+          <h1 className="text-4xl md:text-5xl font-extrabold text-white drop-shadow-lg">
+            Your Shopping Cart
+          </h1>
+        </div>
+      </div>
 
-      <div className="max-w-7xl mx-auto px-6 py-10">
-        <div className="flex justify-between mb-8">
-          <h1 className="text-3xl font-bold">Shopping Cart</h1>
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        <div className="flex justify-between items-center mb-10">
+          <div>
+            <h2 className="text-3xl font-bold tracking-tight">Review Your Items</h2>
+            <p className="text-gray-500 mt-1">Manage your books before proceeding to checkout.</p>
+          </div>
 
           <button
             onClick={() => setShowOrdersModal(true)}
-            className="bg-black text-white px-5 py-3 rounded-xl"
+            className="bg-white border border-gray-200 text-gray-800 hover:bg-gray-50 px-6 py-3 rounded-xl font-medium transition-all shadow-sm flex items-center gap-2"
           >
-            My Orders
+            <span>📦</span> My Orders
           </button>
         </div>
 
         {cart.length === 0 ? (
-          <div className="bg-white p-10 text-center rounded-xl">
-            Empty Cart
+          <div className="bg-white p-20 text-center rounded-3xl shadow-sm border border-gray-100">
+            <div className="text-6xl mb-4">🛒</div>
+            <h3 className="text-2xl font-bold mb-2">Your cart is empty</h3>
+            <p className="text-gray-500 mb-8">Looks like you haven't added any books to your cart yet.</p>
+            <a 
+              href="/books" 
+              className="bg-pink-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-pink-700 transition-colors inline-block"
+            >
+              Explore Books
+            </a>
           </div>
         ) : (
-          <div className="grid lg:grid-cols-3 gap-8">
+          <div className="grid lg:grid-cols-3 gap-10">
             <CartItems
               items={cart}
               updateQuantity={updateQuantity}
