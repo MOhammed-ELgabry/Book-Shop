@@ -7,6 +7,8 @@ import { useAuthStore } from "../store/auth";
 import BooksListSkeleton from "../component/skeletons/books/BooksListSkeleton";
 import { getStrapiMedia } from "../utils/getStrapiMedia";
 import { useState } from "react";
+import { ShoppingCart, Heart, Star, ChevronLeft, ChevronRight, BookOpen } from "lucide-react";
+
 export default function BookList() {
   const [loadingId, setLoadingId] = useState(null);
   
@@ -17,7 +19,11 @@ export default function BookList() {
     setCurrentPage,
     loading,
   } = useOutletContext();
-
+console.log({
+  currentPage,
+  totalPages,
+  books: currentBooks.length,
+});
   const navigate = useNavigate();
 
   const addToCart = useCartStore((state) => state.addToCart);
@@ -49,8 +55,8 @@ export default function BookList() {
         showCancelButton: true,
         confirmButtonText: "Login",
         cancelButtonText: "Cancel",
-        confirmButtonColor: "#d33",
-        cancelButtonColor: "#3085d6",
+        confirmButtonColor: "#f97316",
+        cancelButtonColor: "#94a3b8",
       }).then((result) => {
         if (result.isConfirmed) navigate("/login");
       });
@@ -68,6 +74,7 @@ export default function BookList() {
     };
 
     try {
+      setLoadingId(book.id);
       const result = await addToCart(cleanBook, user);
 
       if (result?.success) {
@@ -97,6 +104,8 @@ export default function BookList() {
         title: "Error",
         text: "Something went wrong",
       });
+    } finally {
+      setLoadingId(null);
     }
   };
 
@@ -114,6 +123,7 @@ export default function BookList() {
         showCancelButton: true,
         confirmButtonText: "Login",
         cancelButtonText: "Cancel",
+        confirmButtonColor: "#f97316",
       }).then((result) => {
         if (result.isConfirmed) navigate("/login");
       });
@@ -141,94 +151,140 @@ export default function BookList() {
 
   if (loading) return <BooksListSkeleton />;
 
+  if (currentBooks.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 px-4 text-center bg-white rounded-[3rem] border border-slate-100 shadow-sm">
+        <div className="w-24 h-24 bg-orange-50 rounded-full flex items-center justify-center mb-6">
+          <BookOpen size={48} className="text-orange-400" />
+        </div>
+        <h2 className="text-3xl font-black text-slate-900 mb-3">No Books Found</h2>
+        <p className="text-slate-500 max-w-md mx-auto">
+          We couldn't find any books matching your current search or filters. Try adjusting your criteria.
+        </p>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col gap-6">
-      {currentBooks.map((book) => (
-        <div
-          key={book.id}
-          onClick={() => goToBook(book)}
-          className="bg-white rounded-xl shadow-md p-6 flex flex-col lg:flex-row gap-6 items-center lg:items-start cursor-pointer"
-        >
-          {/* IMAGE FIXED */}
-          <img
-            src={getStrapiMedia(book.img)}
-            alt={book.name}
-            className="w-40 h-56 object-cover rounded-lg"
-          />
-
-          {/* INFO */}
-          <div className="flex flex-col flex-1 gap-3">
-            <h2 className="text-2xl font-semibold">
-              {book.name}
-            </h2>
-
-            <p className="text-gray-500">
-              {book.description}
-            </p>
-
-            <p className="text-gray-600">
-              Rate: {book.rate}
-            </p>
-
-            <div className="flex gap-12 mt-2">
-              <div>
-                <p className="text-gray-400 text-sm">Author</p>
-                <p className="font-medium">{book.author}</p>
+    <div className="space-y-12">
+      {/* Books Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
+        {currentBooks.map((book) => (
+          <div
+            key={book.id}
+            onClick={() => goToBook(book)}
+            className="group relative bg-white rounded-[2rem] border border-slate-100 shadow-sm transition-all duration-500 hover:shadow-2xl hover:shadow-orange-200/40 hover:-translate-y-2 flex flex-col h-full cursor-pointer overflow-hidden"
+          >
+            {/* Image Container */}
+            <div className="relative aspect-[3/4] overflow-hidden bg-slate-100">
+              <img
+                src={getStrapiMedia(book.img)}
+                alt={book.name}
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              />
+              
+              {/* Overlays */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                 <button className="w-full py-3 bg-white/20 backdrop-blur-md border border-white/30 text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-white hover:text-slate-900 transition-all">
+                   <BookOpen size={16} />
+                   Quick View
+                 </button>
               </div>
 
-              <div>
-                <p className="text-gray-400 text-sm">Category</p>
-                <p className="font-medium">{book.category}</p>
-              </div>
-            </div>
-          </div>
-
-          {/* ACTIONS */}
-          <div className="flex flex-col items-end gap-4">
-            <p className="text-2xl font-bold">
-              {book.price}$
-            </p>
-
-            <div className="flex gap-3">
-           <button
-  onClick={(e) => handleAddToCart(book, e)}
-  disabled={loadingId === book.id}
-  className="bg-pink-600 text-white px-6 py-2 rounded-lg hover:bg-pink-700 disabled:opacity-60"
->
-  {loadingId === book.id ? "Adding..." : "Add To Cart 🛒"}
-</button>
-
+              {/* Wishlist Button */}
               <button
                 onClick={(e) => handleAddToLoveBooks(book, e)}
-                className="border border-pink-600 text-pink-600 px-4 py-2 rounded-lg hover:bg-pink-50"
+                className="absolute top-4 right-4 w-11 h-11 bg-white/90 backdrop-blur-sm rounded-xl flex items-center justify-center text-slate-400 hover:text-red-500 hover:scale-110 transition-all shadow-lg active:scale-95 z-10"
               >
-                ❤
+                <Heart size={20} fill={false ? "currentColor" : "none"} />
               </button>
+
+              {/* Rating Badge */}
+              {book.rate && (
+                <div className="absolute top-4 left-4 px-3 py-1.5 bg-white/90 backdrop-blur-sm rounded-xl flex items-center gap-1.5 shadow-lg text-sm font-black text-slate-800">
+                  <Star size={14} className="text-orange-500 fill-orange-500" />
+                  {book.rate}
+                </div>
+              )}
+            </div>
+
+            {/* Content */}
+            <div className="p-6 flex flex-col flex-1 gap-4">
+              <div className="flex-1">
+                <span className="inline-block px-3 py-1 bg-orange-50 text-orange-600 rounded-lg text-[10px] font-black uppercase tracking-widest mb-3">
+                  {book.category}
+                </span>
+                <h3 className="text-xl font-bold text-slate-900 line-clamp-2 leading-tight mb-1 group-hover:text-orange-500 transition-colors">
+                  {book.name}
+                </h3>
+                <p className="text-slate-500 font-medium text-sm">
+                  by {book.author}
+                </p>
+              </div>
+
+              <div className="flex items-center justify-between mt-2 pt-4 border-t border-slate-50">
+                <div className="flex flex-col">
+                  <span className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Price</span>
+                  <span className="text-2xl font-black text-slate-900">${book.price}</span>
+                </div>
+
+                <button
+                  onClick={(e) => handleAddToCart(book, e)}
+                  disabled={loadingId === book.id}
+                  className="w-12 h-12 bg-orange-500 hover:bg-orange-600 disabled:bg-slate-200 text-white rounded-xl flex items-center justify-center transition-all shadow-lg shadow-orange-500/20 active:scale-95"
+                >
+                  {loadingId === book.id ? (
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <ShoppingCart size={22} />
+                  )}
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      ))}
-
-      {/* PAGINATION */}
-      <div className="flex justify-center gap-3 mt-6">
-        {Array.from({ length: totalPages || 1 }, (_, i) => i + 1).map(
-          (num) => (
-            <button
-              key={num}
-              className={`px-4 py-2 rounded-lg ${
-                num === currentPage
-                  ? "bg-pink-600 text-white"
-                  : "bg-white border"
-              }`}
-              onClick={() => {
-                if (num !== currentPage) setCurrentPage(num);
-              }}
-            >
-              {num}
-            </button>
-          )
-        )}
+        ))}
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-2 pt-10 border-t border-slate-100">
+          <button
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage(currentPage - 1)}
+            className="w-12 h-12 flex items-center justify-center rounded-2xl bg-white border border-slate-200 text-slate-600 hover:border-orange-500 hover:text-orange-500 disabled:opacity-40 disabled:hover:border-slate-200 disabled:hover:text-slate-600 transition-all active:scale-90 shadow-sm"
+          >
+            <ChevronLeft size={20} />
+          </button>
+
+          <div className="flex items-center gap-2 px-4">
+            {Array.from({ length: totalPages || 1 }, (_, i) => i + 1).map(
+              (num) => (
+                <button
+                  key={num}
+                  className={`w-12 h-12 rounded-2xl font-black text-sm transition-all duration-300 active:scale-90 shadow-sm border ${
+                    num === currentPage
+                      ? "bg-orange-500 border-orange-500 text-white shadow-lg shadow-orange-500/30 scale-110"
+                      : "bg-white border-slate-200 text-slate-600 hover:border-orange-500 hover:text-orange-500"
+                  }`}
+                  onClick={() => {
+                    if (num !== currentPage) setCurrentPage(num);
+                  }}
+                >
+                  {num}
+                </button>
+              )
+            )}
+          </div>
+
+          <button
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage(currentPage + 1)}
+            className="w-12 h-12 flex items-center justify-center rounded-2xl bg-white border border-slate-200 text-slate-600 hover:border-orange-500 hover:text-orange-500 disabled:opacity-40 disabled:hover:border-slate-200 disabled:hover:text-slate-600 transition-all active:scale-90 shadow-sm"
+          >
+            <ChevronRight size={20} />
+          </button>
+        </div>
+      )}
     </div>
   );
 }
