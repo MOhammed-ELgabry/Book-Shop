@@ -19,11 +19,7 @@ export default function BookList() {
     setCurrentPage,
     loading,
   } = useOutletContext();
-console.log({
-  currentPage,
-  totalPages,
-  books: currentBooks.length,
-});
+
   const navigate = useNavigate();
 
   const addToCart = useCartStore((state) => state.addToCart);
