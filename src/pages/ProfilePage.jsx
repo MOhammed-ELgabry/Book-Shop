@@ -41,7 +41,7 @@ export default function ProfilePage() {
 
   const [avatarFile, setAvatarFile] = useState(null);
   const [avatarPreview, setAvatarPreview] = useState("");
-
+const [memberSince, setMemberSince] = useState("");
   // ======================
   // LOAD PROFILE
   // ======================
@@ -59,8 +59,7 @@ export default function ProfilePage() {
 
         const profile = res.data?.data?.[0];
 
-        console.log("PROFILE DATA:", profile);
-
+       
         if (!profile) {
 
           Swal.fire(
@@ -73,7 +72,7 @@ export default function ProfilePage() {
         }
 
         setProfileId(profile.documentId);
-
+setMemberSince(profile.createdAt);
         setFormData({
           firstName: profile.firstName || "",
           lastName: profile.lastName || "",
@@ -283,7 +282,12 @@ export default function ProfilePage() {
       setLoading(false);
     }
   };
-
+const formattedMemberSince = memberSince
+  ? new Date(memberSince).toLocaleDateString("en-US", {
+      month: "long",
+      year: "numeric",
+    })
+  : "";
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans">
       <NavBar />
@@ -511,7 +515,7 @@ export default function ProfilePage() {
                 </div>
                 <div>
                   <h4 className="text-lg font-black text-slate-900">Member Since</h4>
-                  <p className="text-slate-500 font-medium text-sm">Joined April 2024</p>
+                  <p className="text-slate-500 font-medium text-sm">Joined {formattedMemberSince}</p>
                 </div>
               </div>
             </div>
