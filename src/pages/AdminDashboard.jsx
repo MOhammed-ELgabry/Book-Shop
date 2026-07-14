@@ -61,8 +61,8 @@ export default function AdminDashboard() {
       );
 
       setOrders(sorted);
-    } catch (err) {
-      console.log(err);
+    } catch  {
+      setOrders([])
     } finally {
       setLoading(false);
     }

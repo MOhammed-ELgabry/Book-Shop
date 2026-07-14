@@ -1,4 +1,4 @@
-
+import { Calendar } from "lucide-react";
 
 export default function OrdersModal({ show, onClose, orders, ordersLoading }) {
   if (!show) return null;
@@ -86,12 +86,12 @@ export default function OrdersModal({ show, onClose, orders, ordersLoading }) {
                         <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Order ID</span>
                         <h3 className="font-black text-xl text-gray-800">#{order.id}</h3>
                       </div>
-                      <p className="text-sm text-gray-500 flex items-center gap-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-//9 5h.01M12 20h.01M7 20h.01M17 20h.01M12 15h.01M7 15h.01M17 15h.01" />
-                        </svg>
-                        {new Date(order.createdAt).toLocaleDateString(undefined, { dateStyle: 'long' })}
-                      </p>
+                    <p className="text-sm text-gray-500 flex items-center gap-1">
+  <Calendar className="w-4 h-4" />
+  {new Date(order.createdAt).toLocaleDateString(undefined, {
+    dateStyle: "long",
+  })}
+</p>
                     </div>
 
                     <div className="flex flex-wrap gap-2">

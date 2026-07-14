@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
-
+import Swal from "sweetalert2";
 import NavBar from "../component/NavBar";
 import Footer from "../component/Footer";
 
@@ -33,8 +33,10 @@ export default function AboutUs() {
         setAboutGrid(grid.data.data);
         setAboutPhoto(photos.data.data);
         setAboutCard(cards.data.data);
-      } catch (err) {
-        console.log(err);
+      } catch {
+          setAboutGrid([]);
+  setAboutPhoto([]);
+  setAboutCard([]);
       } finally {
         setLoading(false);
       }
@@ -49,9 +51,14 @@ export default function AboutUs() {
     message: "",
   };
 
-  const handleSubmit = (values) => {
-    console.log(values);
-  };
+  const handleSubmit = () => {
+  Swal.fire({
+    icon: "info",
+    title: "Coming Soon",
+    text: "Contact form is not available yet.",
+    confirmButtonColor: "#f97316",
+  });
+};
 
   return (
     <div>

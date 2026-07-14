@@ -46,7 +46,16 @@ const handleGoogleLogin = async () => {
 
     navigate("/");
   } catch (err) {
-    console.log(err);
+    Swal.fire({
+      icon: "error",
+      title: "Google Login Failed",
+      text:
+        err.response?.data?.error?.message ||
+        err.response?.data?.message ||
+        err.message ||
+        "Unable to sign in with Google. Please try again.",
+      confirmButtonColor: "#f97316",
+    });
   }
 };
 

@@ -212,7 +212,7 @@ const handleCheckout = async () => {
 
     await fetchOrders();
   } catch (err) {
-    console.log(err);
+    
 
     Swal.fire({
       icon: "error",

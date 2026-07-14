@@ -19,7 +19,7 @@ export default function GoogleCallback() {
         // 🔥 jwt الحقيقي من سترابي
         const jwt = params.get("access_token");
 
-        console.log("STRAPI JWT:", jwt);
+        
 
         if (!jwt) {
           navigate("/login");
@@ -35,7 +35,7 @@ export default function GoogleCallback() {
 
         const user = res.data;
 
-        console.log("GOOGLE USER:", user);
+        
 
         // 🔥 خزّن اليوزر الحقيقي + jwt
         setUser(user, jwt);
@@ -48,13 +48,18 @@ export default function GoogleCallback() {
         });
 
         navigate("/");
-      } catch (err) {
-        console.log("GOOGLE LOGIN ERROR:", err);
+      } catch (err)  {
+       
 
         Swal.fire({
-          icon: "error",
-          title: "Google Login Failed",
-        });
+    icon: "error",
+    title: "Google Login Failed",
+    text:
+      err.response?.data?.error?.message ||
+      err.message ||
+      "Unable to sign in with Google.",
+    confirmButtonColor: "#f97316",
+  });
 
         navigate("/login");
       }

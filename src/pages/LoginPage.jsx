@@ -227,7 +227,7 @@ export default function LoginPage() {
                 {lang === "en"
                   ? "Don't have an account?"
                   : "ليس لديك حساب؟"}{" "}
-                <span
+                <span 
                   onClick={() => navigate("/register")}
                   className="cursor-pointer font-semibold text-pink-600 underline-offset-4 hover:underline"
                 >

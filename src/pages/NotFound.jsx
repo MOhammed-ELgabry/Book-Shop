@@ -62,7 +62,7 @@ export default function NotFound() {
         <div className="w-6 h-1 bg-slate-200 rounded-sm" />
         <div className="w-8 h-1 bg-slate-200 rounded-sm" />
         <div className="w-5 h-1 bg-slate-200 rounded-sm" />
-      </motion.div>
+      </motion.div> 
 
       {/* Centered Content Stack */}
       <div className="flex-grow flex flex-col items-center justify-center px-6 py-20 text-center relative z-10 max-w-2xl mx-auto w-full">

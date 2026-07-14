@@ -720,7 +720,7 @@
           <span className="font-bold text-slate-800 text-lg tracking-tight">{item?.book?.title || "Untitle Book"}</span>
                          </div>
                          <div className="flex items-center gap-4">
-        <span className="text-slate-400 text-xs font-black uppercase tracking-wider px-4 py-1.5 bg-slate-50
+        <span className="text-slate-400 text-xs font-black uppercase tracking-wider px-4 py-1.5 bg-slate-50 
        rounded-xl border border-slate-100">Qty: {item?.quantity}</span>
                          </div>
                        </div>

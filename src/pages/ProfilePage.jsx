@@ -91,18 +91,16 @@ setMemberSince(profile.createdAt);
           setAvatarPreview(avatarUrl);
         }
 
-      } catch (err) {
+      } catch{
 
-        console.log(
-          "FETCH PROFILE ERROR:",
-          err
-        );
+       
 
-        Swal.fire(
-          "Error",
-          "Failed to load profile",
-          "error"
-        );
+       Swal.fire({
+    icon: "error",
+    title: "Failed to Load Profile",
+    text: "We couldn't load your profile. Please try again.",
+    confirmButtonColor: "#f97316",
+  });
       }
     };
 
@@ -265,17 +263,20 @@ setMemberSince(profile.createdAt);
 
       setAvatarFile(null);
 
-    } catch (err) {
+    } catch (err)  {
 
-      console.log(
-        "UPDATE PROFILE ERROR:",
-        err
-      );
+     
 
       Swal.fire({
-        icon: "error",
-        title: "Update Failed",
-      });
+    icon: "error",
+    title: "Update Failed",
+    text:
+      err.response?.data?.error?.message ||
+      err.response?.data?.message ||
+      err.message ||
+      "Something went wrong. Please try again.",
+    confirmButtonColor: "#f97316",
+  });
 
     } finally {
 

@@ -39,8 +39,8 @@ export default function HomeBefore() {
           `${import.meta.env.VITE_API_URL}/api/sales/?populate=*`
         );
         setSale(res.data.data);
-      } catch (err) {
-        console.log(err);
+      } catch  {
+        setSale([]);
       }
     };
     fetchData();
@@ -53,8 +53,8 @@ export default function HomeBefore() {
           `${import.meta.env.VITE_API_URL}/api/recommends/?populate=*`
         );
         setRecommended(res.data.data);
-      } catch (err) {
-        console.log(err);
+      } catch  {
+         setRecommended([]);
       }
     };
     fetchData();
@@ -67,8 +67,8 @@ export default function HomeBefore() {
           `${import.meta.env.VITE_API_URL}/api/image-sliders?populate=*`
         );
         setImageSlider(res.data.data);
-      } catch (err) {
-        console.log(err);
+      } catch {
+       setImageSlider([]);
       }
     };
     fetchData();
@@ -81,8 +81,8 @@ export default function HomeBefore() {
           `${import.meta.env.VITE_API_URL}/api/services?populate=*`
         );
         setUseServices(res.data.data);
-      } catch (err) {
-        console.log(err);
+      } catch {
+        setUseServices([]);
       }
     };
     fetchData();

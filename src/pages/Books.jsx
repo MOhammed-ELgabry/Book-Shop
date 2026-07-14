@@ -47,8 +47,8 @@ export default function Books() {
         }));
 
         setBooks(formatted);
-      } catch (err) {
-        console.log(err);
+      } catch  {
+        setBooks([]);
       } finally {
         setLoading(false);
       }
@@ -115,9 +115,13 @@ export default function Books() {
         timer: 1200,
         showConfirmButton: false,
       });
-    } catch (err) {
-      console.log(err);
-      Swal.fire("Error", "Something went wrong", "error");
+    } catch  {
+     Swal.fire({
+    icon: "error",
+    title: "Oops...",
+    text: "Something went wrong. Please try again.",
+    confirmButtonColor: "#f97316",
+  });
     }
   };
 
