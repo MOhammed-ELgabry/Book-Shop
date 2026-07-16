@@ -1,128 +1,260 @@
-# 📚 Book Shop Web Application
+<div align="center">
 
-A modern, scalable React-based Book Store application designed to simulate real-world e-commerce frontend architecture with authentication, protected routes, and a smooth user experience.
+# 📚 Book Shop
+### Full Stack E-Commerce Web Application
 
----
+A modern, scalable, and responsive online bookstore built with **React.js**, **Strapi CMS**, **Zustand**, and **Tailwind CSS**.
 
-## 🚀 Overview
+<img src="https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=white"/>
+<img src="https://img.shields.io/badge/JavaScript-ES6+-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black"/>
+<img src="https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white"/>
+<img src="https://img.shields.io/badge/Strapi-Headless_CMS-4945FF?style=for-the-badge&logo=strapi&logoColor=white"/>
+<img src="https://img.shields.io/badge/Zustand-State_Management-orange?style=for-the-badge"/>
+<img src="https://img.shields.io/badge/REST-API-success?style=for-the-badge"/>
+<img src="https://img.shields.io/badge/Responsive-Yes-success?style=for-the-badge"/>
+<img src="https://img.shields.io/badge/Status-Active-success?style=for-the-badge"/>
 
-This project is a fully functional frontend application that allows users to browse books, view detailed information, manage their cart, and save favorite books.
+<br>
 
-It focuses on **real-world React architecture patterns**, including state management, route protection, and reusable components.
+### 🌐 Live Demo
 
----
+## 👉 http://162.35.172.155/
 
-## ✨ Key Features
-
-### 🔐 Authentication System
-- User login & registration flow
-- Persistent authentication using local storage
-- Global auth state management with Zustand
-
----
-## Project Screenshots
-
-![Screenshot 1](./11.04.2026_11.48.21_RECfiver.png)
-
-![Screenshot 2](./11.04.2026_11.50.56fiver2_REC.png)
-
-![Screenshot 3](./11.04.2026_11.53.18fiver3_REC.png)
-
----
-### 🧭 Routing & Navigation
-- Public & protected routes
-- Nested routing structure for books section
-- Layout separation for better scalability
+</div>
 
 ---
 
-### 📖 Book System
-- Browse a list of available books
-- View detailed information for each book
-- Search and filter functionality
+# 📖 About
+
+Book Shop is a complete Full Stack E-Commerce application designed to simulate a real-world online bookstore.
+
+Users can browse books, create accounts, authenticate securely, manage shopping carts and wishlists, place orders using multiple payment methods, and track their order history.
+
+The application follows a modern frontend architecture using reusable components, centralized state management with Zustand, and a Headless CMS backend powered by Strapi.
+
+The project focuses on clean architecture, scalability, responsive design, maintainability, and implementing real business workflows.
 
 ---
 
-### 🛒 Cart & Favorites
-- Add/remove books from cart
-- Save favorite books for later
-- Smooth state updates using global store
+# ✨ Features
+
+## 👤 Authentication
+
+- User Registration
+- User Login
+- Google Login Integration
+- JWT Authentication
+- Protected Routes
+- Persistent Authentication
 
 ---
 
-### 👤 User Profile
-- Simple profile page for user information
-- Connected to authentication state
+## 📚 Books
+
+- Browse Books
+- Book Details
+- Categories
+- Search
+- Filtering
+- Pagination
+- Recommended Books
+- Flash Sales
 
 ---
 
-### ⚡ User Experience Enhancements
-- Global loading system on route changes
-- Smooth transitions between pages
-- Skeleton loading styles for better UX perception
+## ❤️ Wishlist
+
+- Add Books to Wishlist
+- Remove Books
+- Persistent Wishlist
 
 ---
 
-## 🧠 State Management
+## 🛒 Shopping Cart
 
-The application uses **Zustand** for lightweight and scalable state management:
-
-- Authentication state
-- Loader state
-- Cart & favorites handling (if extended)
-
----
-
-## 🏗️ Architecture Highlights
-
-- Component-based React architecture
-- Separation of concerns (UI, state, routing)
-- Protected route system for secure pages
-- Scalable folder structure for future expansion
+- Add Books
+- Remove Books
+- Update Quantity
+- Dynamic Price Calculation
+- Backend Cart Synchronization
 
 ---
 
-## 🛠️ Tech Stack
+## 💳 Checkout & Payments
 
-- React.js (Vite)
+Multiple payment methods:
+
+- Cash Payment
+- Wallet Payment
+- Visa Mock Payment Flow
+
+Features:
+
+- Checkout Session Creation
+- Order Creation
+- Payment Status Management
+- Cart Clearing After Successful Payment
+
+---
+
+## 📦 Orders
+
+- Create Orders
+- Order History
+- Order Details
+- Payment Status Tracking
+
+---
+
+## 👤 User Profile
+
+- Profile Management
+- Update Personal Information
+- User Dashboard
+
+---
+
+## 🧑‍💼 Seller Dashboard
+
+- Sales Overview
+- Orders Management
+
+---
+
+## 🛠️ Admin Dashboard
+
+- Dashboard Statistics
+- Users Management
+- Products Management
+- Orders Management
+- CMS Integration
+
+---
+
+## 📱 Responsive Design
+
+Fully optimized for:
+
+- Desktop
+- Tablet
+- Mobile
+
+Built with Tailwind CSS.
+
+---
+
+# 🛠 Tech Stack
+
+## Frontend
+
+- React.js
 - JavaScript (ES6+)
 - React Router DOM
-- Zustand (State Management)
-- CSS / Responsive Design
-- Skeleton Loading UI
+- Tailwind CSS
+- Zustand
+- Axios
+- Formik
+- Yup
+- Swiper.js
+- GSAP
+- Animate.css
+- React Icons
+- Lucide React
 
 ---
 
-## 💡 Project Goal
+## Backend
 
-The goal of this project is to demonstrate:
-
-- Strong understanding of React fundamentals
-- Real-world application structure
-- State management techniques
-- Routing and authentication flow
-- Clean and scalable frontend architecture
+- Strapi CMS
+- REST API
+- JWT Authentication
 
 ---
 
-## 📌 Future Improvements
+## Deployment
 
-- Backend API integration
-- Payment gateway (cart checkout system)
-- Advanced search & filtering
-- Admin dashboard for managing books
-- Performance optimization & lazy loading
-
----
-
-## 👨‍💻 Author
-
-**Mohammed Elgabry**
-
-Frontend Developer passionate about building scalable web applications with clean architecture and modern UI/UX practices.
+- VPS
+- Ubuntu
+- Nginx
+- PM2
 
 ---
 
-## 📎 Notes
+# 📸 Screenshots
 
-This project is built as a portfolio piece to demonstrate frontend engineering skills and real-world React application structure.
+## 🏠 Home Page
+
+<p align="center">
+<img src="src/assets/screenshots/book-store1_REC.png" alt="Home Page" width="100%">
+</p>
+
+---
+
+## 📚 Books Page
+
+<p align="center">
+<img src="src/assets/screenshots/book-store2_REC.png" alt="Books Page" width="100%">
+</p>
+
+---
+
+## 📦 Order Details
+
+<p align="center">
+<img src="src/assets/screenshots/book-store3REC.png" alt="Order Details" width="100%">
+</p>
+
+---
+
+## 👤 User Dashboard
+
+<p align="center">
+<img src="src/assets/screenshots/book-store4.png" alt="User Dashboard" width="100%">
+</p>
+
+---
+
+## 🛠️ Admin Dashboard
+
+<p align="center">
+<img src="src/assets/screenshots/book-store5.png" alt="Admin Dashboard" width="100%">
+</p>
+
+---
+
+## 🛍️ Seller Dashboard
+
+<p align="center">
+<img src="src/assets/screenshots/book-store6.png" alt="Seller Dashboard" width="100%">
+</p>
+
+---
+
+## 👤 Profile Page
+
+<p align="center">
+<img src="src/assets/screenshots/book-store7.png" alt="Profile Page" width="100%">
+</p>
+
+---
+
+# 🚀 Deployment Architecture
+
+## Frontend
+
+- React + Vite Build
+- Nginx Hosting
+
+## Backend
+
+- Strapi CMS
+- PM2 Process Manager
+- Nginx Reverse Proxy
+
+## Server
+
+- Ubuntu VPS
+
+---
+
+# 📂 Project Structure
